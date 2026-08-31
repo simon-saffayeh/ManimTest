@@ -1,0 +1,38 @@
+{
+  "_comment": "Voice presets for the Shorts pipeline. Change `default` to switch every video at once, or set VideoMeta(voice=...) to override one. `build.py voices` lists what your account can actually use; `build.py voices --preview <name>` auditions one cheaply.",
+  "default": "jesse",
+  "settings": {
+    "model": "eleven_multilingual_v2",
+    "stability": 0.45,
+    "similarity_boost": 0.75,
+    "style": 0.0,
+    "use_speaker_boost": true
+  },
+  "presets": {
+    "roger": {
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "label": "Roger - Laid-Back, Casual, Resonant"
+    },
+    "jesse": {
+      "voice_id": "A18diVRGRYJH7dKHIDMo",
+      "label": "Jesse - Southern, E Learning, Corporate",
+      "note": "Voice Library / professional voice - REQUIRES A PAID PLAN. The free tier refuses it over the API."
+    },
+    "alice": {
+      "voice_id": "Xb7hH8MSUJpSbSDYk0k2",
+      "label": "Alice - Clear, Engaging Educator"
+    },
+    "river": {
+      "voice_id": "SAz9YHcvj6GT2YYXdXww",
+      "label": "River - Relaxed, Neutral, Informative"
+    },
+    "daniel": {
+      "voice_id": "onwK4e9ZLuTAKqWW03F9",
+      "label": "Daniel - Steady Broadcaster"
+    },
+    "matilda": {
+      "voice_id": "XrExE9yKIg1WjnnlVkGX",
+      "label": "Matilda - Knowledgable, Professional"
+    }
+  }
+}

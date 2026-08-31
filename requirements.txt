@@ -1,0 +1,19 @@
+# Python 3.10. Install into .venv, then copy the bundled ffmpeg:
+#   python -m venv .venv
+#   .venv/Scripts/python -m pip install -r requirements.txt
+#   .venv/Scripts/python -c "import imageio_ffmpeg,shutil; shutil.copy(imageio_ffmpeg.get_ffmpeg_exe(),'bin/ffmpeg.exe')"
+# LaTeX comes from MiKTeX (winget install MiKTeX.MiKTeX --scope user).
+
+manim==0.19.1
+manim-voiceover==0.3.7
+
+# The manim-voiceover ElevenLabs service uses the pre-1.0 top-level API
+# (generate, save, voices). elevenlabs>=1.0 removed those and breaks it.
+elevenlabs==0.2.27
+
+# Supplies the bundled ffmpeg binary that gets copied into bin/.
+imageio-ffmpeg>=0.6.0
+python-dotenv>=0.21
+gTTS>=2.5          # fallback only; build.py check rejects gTTS-narrated output
+mutagen>=1.47      # reading clip durations
+pillow>=10         # thumbnail checks

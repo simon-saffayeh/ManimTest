@@ -1,0 +1,8 @@
+.env
+.venv/
+media/
+frames/
+bin/
+__pycache__/
+*.log
+out/
