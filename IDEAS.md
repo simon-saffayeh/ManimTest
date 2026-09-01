@@ -33,8 +33,9 @@ that way; prefer topics that can.
 - [x] `hairs` — pigeonhole: at least 45 Londoners share a hair count. 54s
 - [x] `floats` — why 0.1 + 0.2 is not 0.3. 47s
 - [x] `interest` — 100% interest compounded constantly stops at e. 47s
-- [x] `fastest` — brachistochrone: the straight line loses the race. 
-- [x] `galton` — a bell curve building itself from falling balls. 
+- [x] `fastest` — brachistochrone: the straight line loses the race. 49s
+- [x] `galton` — a bell curve building itself from falling balls. 45s
+- [x] `collatz` — 79 trajectories crashing to 1; still unproven. 
 
 ## Strong candidates
 
