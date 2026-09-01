@@ -45,9 +45,16 @@ class ShortScene(VoiceoverScene):
 
     @staticmethod
     def panel(*lines: str, size: int = 44, center=PANEL_CENTER, buff: float = 0.28):
-        """A stack of typeset lines parked in the lower third."""
-        group = VGroup(*[fit(MathTex(line, font_size=size)) for line in lines])
-        return group.arrange(DOWN, buff=buff).move_to(center)
+        """A stack of typeset lines parked in the lower third.
+
+        The block is fitted as a whole, not line by line. Fitting each line
+        separately shrinks only the ones that overrun, so a two-line caption
+        whose first line is long renders at two different type sizes - which
+        reads as a mistake rather than as emphasis.
+        """
+        group = VGroup(*[MathTex(line, font_size=size) for line in lines])
+        group.arrange(DOWN, buff=buff)
+        return fit(group).move_to(center)
 
 
 class ThumbnailScene(Scene):

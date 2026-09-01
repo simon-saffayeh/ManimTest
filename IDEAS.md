@@ -14,24 +14,41 @@ answered, **one** picture that carries the whole idea, and an honest payoff in u
 - [x] `koch` — infinite perimeter, finite area. 40.3s
 - [x] `cantor` — the diagonal argument. 39.5s
 - [x] `epsilon` — intro to real analysis, the epsilon-N game. 62.2s
+- [x] `harmonic` — why the harmonic series diverges, by grouping. 48s
+- [x] `benford` — leading digits are not uniform. 52s
+- [x] `birthday` — 23 people, 253 pairs, 50.7%. 46s
+- [x] `fence` — isoperimetric: same fence, 27% more land. 48s
+- [x] `euler` — e^(iπ) = -1 via velocity perpendicular to position. 42s
+- [x] `zeta` — 1+2+3+... = -1/12 is not true; here is what is. 56s
+- [x] `needle` — Buffon's needle, π from dropped matchsticks. 48s
+- [x] `prisoners` — 100 prisoners, 31% not zero. 57s
+- [x] `simpson` — better in both departments, worse overall. 50s
+- [x] `stickers` — coupon collector, 225 packets for 50 stickers. 48s
+- [x] `shuffle` — 52!, an order never seen before. 49s
+- [x] `squares` — odd numbers add to squares, a proof you can see. 46s
 
 ## Strong candidates
 
 - [ ] **Why pi is in the normal distribution** — a bell curve appears from squaring the
   integral. Hook: "Why does π show up in a formula about heights and test scores?"
-- [ ] **The sum 1 + 2 + 3 + ... and why -1/12 is a lie** — good hook, and the honest answer
-  (analytic continuation, not addition) is the payoff. Handle carefully; the point is that the
-  viral claim is misleading.
 - [ ] **Gabriel's horn** — finite volume, infinite surface area. One rotation animation.
-- [ ] **Why e^(iπ) = -1** — a point walking around the unit circle. Very visual.
-- [ ] **Why you can't comb a hairy ball** — one spinning sphere with a vector field.
-- [ ] **Why the harmonic series diverges** — grouping terms into halves. Bars, not equations.
-- [ ] **Birthday paradox** — 23 people, 50% odds. Animate the pair count exploding.
-- [ ] **Why a soap bubble is a sphere** — minimal surface area for fixed volume.
-- [ ] **Benford's law** — leading digits are not uniform. Bars of real-world data.
+  Note the overlap with `koch`; it needs a different framing to avoid repeating that beat.
+- [ ] **Why you can't comb a hairy ball** — one spinning sphere with a vector field. Hook:
+  "somewhere on Earth right now, the wind is not blowing." Needs a 3D scene, which no video
+  has used yet — budget time for that.
+- [ ] **Why 1 is not prime** — sounds pedantic, is actually about unique factorisation.
+- [ ] **Cantor set has measure zero but uncountably many points** — follows `cantor` nicely.
+- [ ] **Why you can't trisect an angle** — the honest version is field theory, so this needs a
+  visual for "constructible numbers double" before it is attemptable.
+- [ ] **Two Londoners have exactly the same number of hairs** — pigeonhole, and the estimate
+  that makes it airtight (heads hold under 200,000 hairs; London holds 9 million people).
+- [ ] **Why 0.1 + 0.2 is not 0.3** — binary fractions. Programmer bait with real content.
+- [ ] **e from compound interest** — (1+1/n)^n climbing to 2.718 and stopping.
 
 ## Weaker — needs a better visual before attempting
 
 - Euler's identity as a *proof* (rather than the circle walk) — too symbolic for 40s.
 - The Banach–Tarski paradox — genuinely hard to show honestly at this length.
 - P vs NP — no single picture carries it.
+- Soap bubbles are spheres — already the closing line of `fence`; not enough left for its own
+  video.

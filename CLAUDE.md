@@ -108,6 +108,17 @@ two seconds.
   it happens on a plain static `Text`.
 - `Transform` between two `Text`s with different glyph counts distorts spacing. Cross-fade
   (`FadeOut` + `FadeIn`) instead.
+- **A multi-row `array`/`tabular` inside `MathTex` does not compile.** `MathTex` wraps its
+  body in `align*`, where the `\\` row separator ends the *align* row and leaves the array
+  unclosed. Verified: a one-row array is fine, two rows raise `ValueError`. Build tables from
+  positioned `MathTex` cells plus `Line` rules (see `counts_table()` in `videos/simpson.py`),
+  which also lets each column carry its own colour.
+- **Never play `FadeIn(m, shift=...)` and another animation on the same `m` in one `play()`.**
+  The mobject ends at **opacity 0 and stays invisible for the rest of the video** - `Rotate`
+  captures its starting state after `FadeIn` has zeroed the opacity, then overwrites the fade
+  on every frame. Verified in isolation: co-animated stroke opacity 0.0, `FadeIn`-only 1.0.
+  Build the mobject in its final orientation and fade it in alone. Nothing errors and no
+  warning is printed, so this only shows up in an extracted frame.
 - `scale()` on a `NumberLine` scales tick **height** too, turning ticks into full-frame
   vertical lines. Use `stretch(factor, dim=0, about_point=...)`.
 - The ElevenLabs module calls `sys.exit()` at import when no key is set — `shortkit.voice`
