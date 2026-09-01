@@ -26,6 +26,7 @@ from dotenv import find_dotenv, load_dotenv
 
 ROOT = Path(__file__).resolve().parent.parent
 VOICES_FILE = ROOT / "voices.json"
+TTS_TIMEOUT = 180        # seconds; see speech_service()
 
 
 @dataclass(frozen=True)
@@ -106,8 +107,18 @@ def speech_service(voice: Voice, cache_dir: Path | None = None):
     That module also calls sys.exit() at import time when the key is missing,
     which is why the import is lazy rather than top-level.
     """
+    import socket
+
     from manim import logger
     from manim_voiceover.services.gtts import GTTSService
+
+    # The pinned elevenlabs 0.2.27 SDK issues its HTTP request with no timeout,
+    # so a dropped connection hangs the render forever rather than failing: the
+    # process sits at 0% CPU between two beats, having already spent the
+    # characters for the ones before it. A default socket timeout turns that
+    # into an exception build.py can report. Synthesis takes seconds, so this
+    # is far longer than any healthy call needs.
+    socket.setdefaulttimeout(TTS_TIMEOUT)
 
     load_dotenv(find_dotenv(usecwd=True))
     if not os.getenv("ELEVEN_API_KEY"):

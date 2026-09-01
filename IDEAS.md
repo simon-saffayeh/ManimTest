@@ -6,6 +6,10 @@ say which you picked before starting. Tick it off and move it to Done.
 A good topic here has three properties: a claim the viewer doubts or a question they want
 answered, **one** picture that carries the whole idea, and an honest payoff in under a minute.
 
+The strongest hooks are **things that move in the first two seconds** - a race, a cascade, a
+shape assembling itself - rather than a claim typeset on screen. `fastest` and `galton` open
+that way; prefer topics that can.
+
 ## Done
 
 - [x] `derivative` — what a derivative is (secant → tangent). 69.5s
@@ -27,8 +31,10 @@ answered, **one** picture that carries the whole idea, and an honest payoff in u
 - [x] `shuffle` — 52!, an order never seen before. 49s
 - [x] `squares` — odd numbers add to squares, a proof you can see. 46s
 - [x] `hairs` — pigeonhole: at least 45 Londoners share a hair count. 54s
-- [x] `floats` — why 0.1 + 0.2 is not 0.3. 
-- [x] `interest` — 100% interest compounded constantly stops at e. 
+- [x] `floats` — why 0.1 + 0.2 is not 0.3. 47s
+- [x] `interest` — 100% interest compounded constantly stops at e. 47s
+- [x] `fastest` — brachistochrone: the straight line loses the race. 
+- [x] `galton` — a bell curve building itself from falling balls. 
 
 ## Strong candidates
 

@@ -95,6 +95,13 @@ Plain spoken English, written to be *said*. No "welcome back", no "let's dive in
 Lead with a hook — a claim the viewer doubts, or a question they want answered — in the first
 two seconds.
 
+**The hook should move.** Beat 1 opening on a static claim is the weakest option available;
+opening on something the viewer watches happen — a race, a cascade, a shape assembling itself —
+is far stronger, and it buys the narration time to set up while the eye is already busy.
+`fastest` (two beads race, the curved one wins) and `galton` (balls fall, the bell curve builds
+itself) are the pattern to copy. Where the topic allows it, spend the animation budget on
+beat 1 rather than on the payoff.
+
 **Pacing: ~2.6 words/sec** (measured for Jesse; Roger was 2.85). `META.words_budget` does the arithmetic:
 40s ≈ 114 words. Four beats is the usual shape.
 
@@ -123,6 +130,13 @@ two seconds.
   vertical lines. Use `stretch(factor, dim=0, about_point=...)`.
 - The ElevenLabs module calls `sys.exit()` at import when no key is set — `shortkit.voice`
   imports it lazily. Don't hoist that import.
+- **A render sitting at 0% CPU between two beats is a hung TTS call, not a slow animation.**
+  The pinned SDK sends its request with no timeout, so a dropped connection blocks forever.
+  The give-away: the manim process uses no CPU while both the partial-movie count and the
+  mp3 count stop changing. `shortkit.voice` now sets a default socket timeout so this raises
+  instead of hanging. To confirm before killing anything, read `(Get-Process -Id <pid>).CPU`
+  twice a few seconds apart — if it does not move, it is wedged. Killing and re-running is
+  safe: beats already synthesised are cached and are not paid for twice.
 - Voice Library / "professional" voices are refused on the free tier, and manim-voiceover
   **silently substitutes another voice**. The guard in `shortkit.voice` raises instead.
 - **`-s` stills skip animations**, so updaters and `always_redraw` never fire. A still can show
