@@ -26,6 +26,7 @@ answered, **one** picture that carries the whole idea, and an honest payoff in u
 - [x] `stickers` — coupon collector, 225 packets for 50 stickers. 48s
 - [x] `shuffle` — 52!, an order never seen before. 49s
 - [x] `squares` — odd numbers add to squares, a proof you can see. 46s
+- [x] `hairs` — pigeonhole: at least 45 Londoners share a hair count. 
 
 ## Strong candidates
 
@@ -40,8 +41,6 @@ answered, **one** picture that carries the whole idea, and an honest payoff in u
 - [ ] **Cantor set has measure zero but uncountably many points** — follows `cantor` nicely.
 - [ ] **Why you can't trisect an angle** — the honest version is field theory, so this needs a
   visual for "constructible numbers double" before it is attemptable.
-- [ ] **Two Londoners have exactly the same number of hairs** — pigeonhole, and the estimate
-  that makes it airtight (heads hold under 200,000 hairs; London holds 9 million people).
 - [ ] **Why 0.1 + 0.2 is not 0.3** — binary fractions. Programmer bait with real content.
 - [ ] **e from compound interest** — (1+1/n)^n climbing to 2.718 and stopping.
 
