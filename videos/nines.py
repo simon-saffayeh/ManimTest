@@ -11,6 +11,7 @@ from shortkit import ShortScene, ThumbnailScene, VideoMeta, fit
 
 META = VideoMeta(
     slug="nines",
+    order=2,
     title="Why 0.999... = 1",
     target_seconds=40,
     youtube_title="0.999... = 1. No, Really.",

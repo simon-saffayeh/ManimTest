@@ -3,9 +3,9 @@
   "default": "jesse",
   "settings": {
     "model": "eleven_multilingual_v2",
-    "stability": 0.45,
+    "stability": 0.25,
     "similarity_boost": 0.75,
-    "style": 0.0,
+    "style": 0.35,
     "use_speaker_boost": true
   },
   "presets": {

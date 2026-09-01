@@ -117,6 +117,17 @@ def probe(mp4: Path) -> dict:
     return info
 
 
+def out_dir(meta) -> Path:
+    """Where a video is staged: out/shorts/NN-slug or out/long-form/NN-slug.
+
+    Numbered by creation order so the folders sort the way the videos were
+    made, rather than alphabetically.
+    """
+    bucket = "long-form" if meta.fmt == "landscape" else "shorts"
+    n = meta.episode or meta.order
+    return OUT / bucket / f"{n:02d}-{meta.slug}"
+
+
 def cache_entries(slug: str) -> list[dict]:
     """The voiceover clips belonging to one video (each has its own cache dir)."""
     f = VOICEOVERS / slug / "cache.json"
@@ -135,7 +146,7 @@ def cmd_check(slug: str, quiet: bool = False) -> int:
 
     mod, _, _ = load(slug)
     meta = mod.META
-    d = OUT / slug
+    d = out_dir(meta)
     mp4, png = d / "video.mp4", d / "thumbnail.png"
     fails, warns = [], []
 
@@ -256,7 +267,7 @@ def chapters_for(slug: str, mod) -> list:
 def cmd_publish(slug: str) -> int:
     """Write the copy-paste YouTube title/description/tags block."""
     mod, _, _ = load(slug)
-    d = OUT / slug
+    d = out_dir(mod.META)
     d.mkdir(parents=True, exist_ok=True)
     dest = d / "publish.txt"
     dest.write_text(mod.META.publish_text(chapters_for(slug, mod)), encoding="utf-8")
@@ -265,8 +276,8 @@ def cmd_publish(slug: str) -> int:
 
 
 def cmd_render(slug: str) -> int:
-    _, short, thumb = load(slug)
-    d = OUT / slug
+    mod, short, thumb = load(slug)
+    d = out_dir(mod.META)
     d.mkdir(parents=True, exist_ok=True)
     src = VIDEOS / f"{slug}.py"
 
@@ -307,12 +318,14 @@ def cmd_stills(slug: str, spec: str | None) -> int:
 
 
 def cmd_list() -> int:
-    print(f"{'slug':<14}{'target':>8}  {'staged':<8}title")
+    print(f"{'slug':<12}{'target':>8}  {'staged':<7}{'folder':<22}title")
     for s in slugs():
         mod, _, _ = load(s)
-        mp4 = OUT / s / "video.mp4"
+        mp4 = out_dir(mod.META) / "video.mp4"
         staged = f"{probe(mp4)['duration']:.0f}s" if mp4.exists() else "-"
-        print(f"{s:<14}{mod.META.target_seconds:>7.0f}s  {staged:<8}{mod.META.title}")
+        where = str(out_dir(mod.META).relative_to(OUT))
+        print(f"{s:<12}{mod.META.target_seconds:>7.0f}s  {staged:<7}"
+              f"{where:<22}{mod.META.title}")
     return 0
 
 

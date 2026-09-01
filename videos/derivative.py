@@ -6,6 +6,7 @@ from shortkit import ShortScene, ThumbnailScene, VideoMeta, fit
 
 META = VideoMeta(
     slug="derivative",
+    order=1,
     title="What is a derivative",
     target_seconds=70,
     youtube_title="What a Derivative Actually Is (Visually)",

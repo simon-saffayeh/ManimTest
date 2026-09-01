@@ -17,6 +17,7 @@ from shortkit.long import LongScene, LongThumbnail, VideoMeta, fit, label
 
 META = VideoMeta(
     slug="proofs02",
+    order=2,
     title="If P Then Q",
     fmt="landscape",
     target_seconds=395,

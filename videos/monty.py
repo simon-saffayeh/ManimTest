@@ -14,6 +14,7 @@ from shortkit import ShortScene, ThumbnailScene, VideoMeta, fit, label
 
 META = VideoMeta(
     slug="monty",
+    order=3,
     title="Always Switch",
     target_seconds=40,
     youtube_title="Why Switching Doors Doubles Your Odds",

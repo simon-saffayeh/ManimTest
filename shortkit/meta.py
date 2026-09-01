@@ -17,6 +17,7 @@ class VideoMeta:
     fmt: str = "vertical"           # "vertical" (Shorts) or "landscape"
     series: str = ""                # e.g. "Introduction to Proofs"
     episode: int = 0                # 1-based; 0 means standalone
+    order: int = 0                  # creation order within its format
 
     # Publishing copy. Written to out/<slug>/publish.txt for pasting into
     # YouTube. Kept here rather than generated, because a title is the single

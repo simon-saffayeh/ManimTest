@@ -15,6 +15,7 @@ from shortkit import ShortScene, ThumbnailScene, VideoMeta, fit
 
 META = VideoMeta(
     slug="epsilon",
+    order=6,
     title="The Epsilon Game",
     target_seconds=69,
     youtube_title="What Real Analysis Actually Is",

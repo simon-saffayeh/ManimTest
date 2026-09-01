@@ -26,7 +26,10 @@ python build.py voices --preview alice  audition a voice (~60 chars of quota)
 ```
 
 `build.py` puts `bin/` and MiKTeX on PATH itself — never do that by hand.
-Outputs land in `out/<slug>/`: `video.mp4`, `thumbnail.png`, `publish.txt`.
+Outputs land in `out/<bucket>/<NN>-<slug>/` as `video.mp4`, `thumbnail.png`, `publish.txt`.
+The bucket is `shorts` or `long-form` (from `META.fmt`), and `NN` is creation order — set
+`order=` on every new video, or `episode=` for a series entry, so the folders sort the way the
+videos were made rather than alphabetically.
 
 ## Anatomy of a video
 

@@ -13,6 +13,7 @@ from shortkit import ShortScene, ThumbnailScene, VideoMeta, fit
 
 META = VideoMeta(
     slug="cantor",
+    order=5,
     title="Bigger Infinities",
     target_seconds=40,
     youtube_title="Some Infinities Are Bigger Than Others",

@@ -17,6 +17,7 @@ from shortkit import ShortScene, ThumbnailScene, VideoMeta, fit
 
 META = VideoMeta(
     slug="koch",
+    order=4,
     title="Infinite Perimeter",
     target_seconds=40,
     youtube_title="This Shape Has an Infinite Perimeter (But Finite Area)",

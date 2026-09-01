@@ -17,6 +17,7 @@ from shortkit.long import LongScene, LongThumbnail, VideoMeta, fit, label
 
 META = VideoMeta(
     slug="proofs01",
+    order=1,
     title="Why Examples Are Not Proof",
     fmt="landscape",
     target_seconds=385,
