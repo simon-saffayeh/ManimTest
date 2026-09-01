@@ -26,7 +26,9 @@ answered, **one** picture that carries the whole idea, and an honest payoff in u
 - [x] `stickers` — coupon collector, 225 packets for 50 stickers. 48s
 - [x] `shuffle` — 52!, an order never seen before. 49s
 - [x] `squares` — odd numbers add to squares, a proof you can see. 46s
-- [x] `hairs` — pigeonhole: at least 45 Londoners share a hair count. 
+- [x] `hairs` — pigeonhole: at least 45 Londoners share a hair count. 54s
+- [x] `floats` — why 0.1 + 0.2 is not 0.3. 
+- [x] `interest` — 100% interest compounded constantly stops at e. 
 
 ## Strong candidates
 
@@ -41,8 +43,11 @@ answered, **one** picture that carries the whole idea, and an honest payoff in u
 - [ ] **Cantor set has measure zero but uncountably many points** — follows `cantor` nicely.
 - [ ] **Why you can't trisect an angle** — the honest version is field theory, so this needs a
   visual for "constructible numbers double" before it is attemptable.
-- [ ] **Why 0.1 + 0.2 is not 0.3** — binary fractions. Programmer bait with real content.
-- [ ] **e from compound interest** — (1+1/n)^n climbing to 2.718 and stopping.
+
+- [ ] **Why a rope round the Earth needs only 6.28 m of slack** — the answer does not depend
+  on the planet's size at all, which is the whole hook.
+- [ ] **Why every map needs only four colours** — state the theorem honestly, including that
+  the proof is by computer and nobody can read it in full.
 
 ## Weaker — needs a better visual before attempting
 
