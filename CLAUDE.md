@@ -120,6 +120,17 @@ voice setup cannot be skipped. Captions must go through `self.caption(...)`, whi
 swings away with the camera. Rotate the *mobjects* rather than flying the camera continuously;
 ambient camera rotation fights fixed-in-frame captions. See `videos/hairyball.py`.
 
+**Motion density is measurable - use it.** Extract at 5fps and take the mean absolute
+frame-to-frame difference. Median across the library: `epicycles` 0.64, `bellpi` 1.33,
+`chaos` 5.61. Under ~0.15 is a frozen frame; a median below ~1 means the video is mostly
+holding still even if no single stretch is technically frozen. For a video whose selling
+point is the animation, aim high and check rather than trusting the eye.
+
+**A crowd of independent movers is the cheapest way to get there.** `chaos` runs 15
+pendulums x (2 rods + 2 bobs) = 60 live mobjects plus 15 traced paths off one precomputed
+physics table. Precompute the simulation at import; integrating inside an updater couples
+the physics to however often manim calls it.
+
 **Height goes along z, not y.** A near-edge-on camera (`phi` close to 90) foreshortens the
 xy-plane by `cos(phi)` - at `phi=88` that is 3.5%, so a curve plotted as `[x, f(x), 0]` renders
 as an almost flat squiggle. Plot it as `[x, 0, f(x)]`. Measured in `bellpi`: the curve went
