@@ -36,7 +36,7 @@ that way; prefer topics that can.
 - [x] `fastest` — brachistochrone: the straight line loses the race. 49s
 - [x] `galton` — a bell curve building itself from falling balls. 45s
 - [x] `collatz` — 79 trajectories crashing to 1; still unproven. 
-- [x] `epicycles` — 8 rotating circles draw a heart exactly. 24s, 3 beats.
+- [x] `epicycles` — 8 rotating circles draw a heart exactly. 31.8s, 4 beats.
 
 ## Strong candidates
 

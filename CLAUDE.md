@@ -145,6 +145,16 @@ underneath all three so no beat ever opens on a static frame.
   safe: beats already synthesised are cached and are not paid for twice.
 - Voice Library / "professional" voices are refused on the free tier, and manim-voiceover
   **silently substitutes another voice**. The guard in `shortkit.voice` raises instead.
+- **A continuous motion must be driven by a dt updater, never by
+  `play(tracker.animate...)`.** A tracker animated that way only advances during
+  *that* `play` call, so the motion freezes solid during every other animation and
+  every `wait` - including captions fading in and the closing hold. The first cut of
+  `epicycles` was static for 6.7s of 24s and looked, correctly, like it had stopped.
+  Use `tracker.add_updater(lambda m, dt: m.increment_value(dt * RATE))` and
+  `self.add(tracker)`, then let beats `self.wait()` while it runs.
+  **Verify with a stall scan, not by eye:** extract at 10fps and compare consecutive
+  frames - any run below ~0.15 mean abs difference is a freeze. Four spot-checked
+  frames will not catch this.
 - **`-s` stills skip animations**, so updaters and `always_redraw` never fire. A still can show
   a moving object frozen at its start and look like a bug that isn't. Verify anything moving by
   extracting frames from the finished mp4 with ffmpeg.

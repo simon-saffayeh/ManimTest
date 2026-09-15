@@ -1,28 +1,26 @@
 """Fourier epicycles: a chain of rotating circles draws a heart.
 
-Written short and dense on purpose. Three beats, ~30s, and the circle chain
-never stops turning from the first frame to the last - there is no beat that
-sits on a static caption waiting for the narration to catch up.
-
 The shape is the standard heart curve
 
     x = 16 sin^3(th)
     y = 13 cos(th) - 5 cos(2 th) - 2 cos(3 th) - cos(4 th)
 
-scaled by 1/16. Because every term is already a low-order harmonic, the complex
+scaled by 1/16. Every term is already a low-order harmonic, so the complex
 Fourier series of this path is *finite*: exactly eight non-zero coefficients,
-at k = -4..+4 excluding 0. Verified over 8192 samples - the reconstruction
-error is 8.5e-16, i.e. exact to floating point. That is the payoff of the
-video: not "many circles approximate it" but "eight circles draw it perfectly".
+at k = -4..+4 excluding 0. Verified over 8192 samples - reconstruction error
+8.5e-16, i.e. exact to floating point. That is the claim the video makes:
+not "many circles approximate it" but "eight circles draw it exactly".
 
-Coefficients (all purely imaginary, all dyadic):
+THE CLOCK MUST DRIVE ITSELF. The first cut advanced the rotation only inside
+`self.play(clock.animate...)`, so the epicycles froze solid during every
+caption FadeIn and during the final wait - 6.7 seconds of a 24s video were
+static, measured frame by frame. An updater tied to dt keeps the chain turning
+through every animation and every wait, whatever else is playing. Never
+animate this clock with .animate; let it run.
 
-    k = -1   25/32     k = +2   -5/32     k = +3    1/16
-    k = -3   -3/16     k = -2   -5/32     k = -4   -1/32
-    k = +1    1/32     k = +4   -1/32
-
-Radii sum to 1.4375, so the whole chain stays inside a 1.44 disc whatever the
-phase - well within SAFE_W / 2 = 1.7.
+Scene scale comes from the measured envelope of all joints over a full period
+(max 1.034 from the origin), not the radii sum (1.4375) - the arms are
+phase-locked and never all align.
 """
 
 import numpy as np
@@ -33,35 +31,37 @@ from shortkit import ShortScene, ThumbnailScene, VideoMeta, fit
 META = VideoMeta(
     slug="epicycles",
     order=25,
-    title="Circles Draw Anything",
-    target_seconds=30,
-    youtube_title="Eight Spinning Circles Draw a Perfect Heart",
+    title="8 Circles Draw This",
+    target_seconds=32,
+    youtube_title="Eight Circles Draw a Perfect Heart",
     description=[
-        "Attach a circle to a circle to a circle, spin each one at its own "
-        "steady rate, and follow the tip of the last arm. The path it traces "
-        "is not a blur - it is a heart, drawn exactly.",
-        "This is a Fourier series. Any closed loop you can draw is a sum of "
-        "circles turning at whole-number speeds; the only choice is how big "
-        "each circle is and where it starts. Most shapes need an endless "
-        "supply and get closer and closer without ever finishing. This heart "
-        "is one of the rare ones that stops: eight circles reproduce it to "
-        "the last decimal place, because the curve is already built from "
-        "sines and cosines of the first four harmonics.",
-        "The same idea runs underneath JPEG images, MP3 audio and every radio "
-        "in use - all of them take a complicated signal apart into circles.",
+        "Eight circles, each spinning at a steady whole-number rate, each one "
+        "riding on the end of the last. Follow the tip of the final arm and it "
+        "draws a heart - not approximately, exactly.",
+        "This is a Fourier series. Any closed loop is a sum of circles turning "
+        "at whole-number speeds. Most shapes need infinitely many and only "
+        "ever get close. This heart is already built from sines and cosines of "
+        "the first four harmonics, so the series terminates: eight circles "
+        "reproduce it to the last decimal place.",
+        "The same decomposition runs underneath JPEG, MP3 and every radio.",
     ],
-    hashtags=["Shorts", "maths", "fourier", "animation"],
+    hashtags=["Shorts", "maths", "fourier"],
     tags=["fourier series", "epicycles", "fourier transform", "circles",
-          "maths", "math explained", "manim", "harmonics", "heart curve"],
+          "maths", "manim", "harmonics", "heart curve"],
 )
 
-# Sized from the *measured* envelope of every joint over a full period, not
-# from the radii sum. The radii total 1.4375, but the arms are phase-locked
-# and never all line up, so no joint ever gets further than 1.034 from the
-# origin - sampled over 4000 steps. At 1.55 that is a half-width of 1.60,
-# inside the 1.7 safe limit, and it fills the frame instead of floating in it.
-SCALE = 1.55                    # scene units per unit of the heart curve
-CENTRE = np.array([0.0, 0.55, 0.0])
+# Sized from the measured joint envelope (1.034), not the radii sum (1.4375).
+SCALE = 1.52
+CENTRE = np.array([0.0, 0.62, 0.0])
+# One lap takes 1/RATE = 13.3s, which is where beat 2 ends - so the heart
+# closes exactly as beat 3 opens on "There it is". The drawing and the
+# narration resolve on the same moment rather than one waiting for the other.
+RATE = 0.075                    # turns per second of the outermost circle
+
+# The guide's safe band in this project's 4.5 x 8.0 units: the top 12% and
+# bottom 20% of the frame carry YouTube's own UI, leaving y in [-2.4, +3.04].
+# Captions sit at -1.85, clear of the bottom overlay.
+CAPTION_Y = DOWN * 1.85
 
 
 def heart(t: float) -> complex:
@@ -77,8 +77,8 @@ def coefficients():
     """The eight non-zero Fourier coefficients, largest circle first.
 
     Computed rather than typed, so the drawing cannot silently disagree with
-    the curve. Ordering by radius is what makes the chain readable: one big
-    circle carrying progressively smaller ones.
+    the curve. Ordering by radius makes the chain readable: one big circle
+    carrying progressively smaller ones.
     """
     n = 4096
     ts = np.arange(n) / n
@@ -111,101 +111,100 @@ def pen_at(t: float) -> np.ndarray:
     return to_scene(arms(t)[-1])
 
 
-def chain(clock: ValueTracker, show: int = N_CIRCLES) -> VGroup:
-    """The live chain: `show` circles with their radius arms.
-
-    Rebuilt every frame by always_redraw, since both the centres and the arm
-    angles change together.
-    """
-    def build():
-        pts = arms(clock.get_value())
-        group = VGroup()
-        for i in range(show):
-            centre, tip = to_scene(pts[i]), to_scene(pts[i + 1])
-            radius = float(np.linalg.norm(tip - centre))
-            shade = interpolate_color(BLUE_B, TEAL_A, i / max(N_CIRCLES - 1, 1))
-            group.add(Circle(radius=radius, color=shade,
-                             stroke_width=2.4, stroke_opacity=0.75)
-                      .move_to(centre))
-            group.add(Line(centre, tip, color=shade, stroke_width=2.4))
-        return group
-
-    return always_redraw(build)
-
-
 class Epicycles(ShortScene):
     META = META
 
     def storyboard(self):
+        # The clock advances on real elapsed time, so the chain keeps turning
+        # through captions, fades and waits alike. See the module docstring -
+        # driving it with .animate is what froze 28% of the first cut.
         clock = ValueTracker(0.0)
+        clock.add_updater(lambda m, dt: m.increment_value(dt * RATE))
+        self.add(clock)
 
-        # ---- beat 1: it is already drawing ------------------------------
-        # No set-up beat. The chain is on screen and turning before the first
-        # word lands, and the traced path starts appearing immediately.
-        wheels = chain(clock)
+        def chain():
+            pts = arms(clock.get_value())
+            group = VGroup()
+            for i in range(N_CIRCLES):
+                centre, tip = to_scene(pts[i]), to_scene(pts[i + 1])
+                radius = float(np.linalg.norm(tip - centre))
+                shade = interpolate_color(BLUE_B, TEAL_A, i / (N_CIRCLES - 1))
+                group.add(Circle(radius=radius, color=shade,
+                                 stroke_width=2.6, stroke_opacity=0.8)
+                          .move_to(centre))
+                group.add(Line(centre, tip, color=shade, stroke_width=2.6))
+            return group
+
+        wheels = always_redraw(chain)
         pen = always_redraw(lambda: Dot(pen_at(clock.get_value()),
-                                        radius=0.075, color=YELLOW))
+                                        radius=0.085, color=YELLOW))
         ink = TracedPath(lambda: pen_at(clock.get_value()),
-                         stroke_color=YELLOW, stroke_width=6)
+                         stroke_color=YELLOW, stroke_width=7)
+
+        # ---- 0:00-0:02 cold open: already in motion, no title card -------
         self.add(wheels, ink, pen)
 
         text = (
-            "Circles on circles, each spinning at its own steady speed. Watch "
-            "the tip of the last one. It is not scribbling."
+            "Eight circles, spinning. Each one riding on the end of the last. "
+            "Watch the tip."
         )
         with self.beat(text) as t:
-            self.play(clock.animate.set_value(1.0), rate_func=linear,
-                      run_time=0.88 * t.duration)
+            self.wait(t.duration)
 
-        # ---- beat 2: the count, while it keeps going ---------------------
-        # The caption arrives over the still-turning chain rather than
-        # replacing it, so nothing on screen stops moving.
+        # ---- 0:02-0:12 sharpen the tension --------------------------------
+        # Captions are the muted-playback channel: every load-bearing claim
+        # appears as text, not only in the audio.
+        claim = self.panel(r"\text{a circle cannot draw a corner}",
+                           size=40, center=CAPTION_Y)
+
+        text = (
+            "Circles are the smoothest thing there is. They should not be able "
+            "to make a sharp point. Keep watching the bottom."
+        )
+        with self.beat(text) as t:
+            self.play(FadeIn(claim), run_time=0.22 * t.duration)
+            self.wait(0.78 * t.duration)
+
+        # ---- 0:12-0:28 the one idea, shown --------------------------------
         count = self.panel(rf"{N_CIRCLES} \text{{ circles, drawn exactly}}",
-                           size=44)
+                           size=42, center=CAPTION_Y)
         count.set_color(YELLOW)
 
         text = (
-            "A heart. And it takes exactly eight circles to draw it. Not "
-            "nearly - exactly, to the last decimal place."
+            "There it is. A heart, with a sharp corner at the bottom and a "
+            "notch at the top. Eight circles, and it is not an approximation. "
+            "It is exact, to the last decimal place."
         )
         with self.beat(text) as t:
-            self.play(clock.animate.set_value(1.7), rate_func=linear,
-                      run_time=0.40 * t.duration)
-            self.play(FadeIn(count), run_time=0.14 * t.duration)
-            self.play(clock.animate.set_value(2.3), rate_func=linear,
-                      run_time=0.34 * t.duration)
+            self.play(FadeOut(claim), run_time=0.10 * t.duration)
+            self.play(FadeIn(count), run_time=0.18 * t.duration)
+            self.wait(0.72 * t.duration)
 
-        # ---- beat 3: what it is called, and where it lives ---------------
-        # The chain keeps turning under the payoff; only the caption swaps.
-        name = self.panel(r"\text{a Fourier series}",
-                          r"\text{JPEG} \;\cdot\; \text{MP3} \;\cdot\; "
-                          r"\text{every radio}", size=40)
-        name[1].set_color(YELLOW)
+        # ---- 0:28-0:35 land it, then stop ---------------------------------
+        name = self.panel(r"\text{a Fourier series}", size=44,
+                          center=CAPTION_Y)
 
         text = (
-            "Any closed shape is a sum of circles. It is called a Fourier "
-            "series, and it is inside every image, every song, every radio."
+            "Any closed shape is a sum of circles. That is a Fourier series, "
+            "and it is inside every image and every song you have ever opened."
         )
         with self.beat(text) as t:
-            self.play(FadeOut(count), run_time=0.06 * t.duration)
-            self.play(clock.animate.set_value(2.8), rate_func=linear,
-                      run_time=0.24 * t.duration)
-            self.play(FadeIn(name[0]), run_time=0.16 * t.duration)
-            self.play(clock.animate.set_value(3.2), rate_func=linear,
-                      run_time=0.20 * t.duration)
-            self.play(FadeIn(name[1]), run_time=0.18 * t.duration)
+            self.play(FadeOut(count), run_time=0.10 * t.duration)
+            self.play(FadeIn(name), run_time=0.20 * t.duration)
+            self.wait(0.70 * t.duration)
 
-        # A last half-turn so the video ends on motion, not on a freeze.
-        self.play(clock.animate.set_value(3.5), rate_func=linear, run_time=1.1)
+        # The last frame holds the key visual, still turning, so the loop
+        # restarts on motion rather than on a freeze.
+        self.wait(1.0)
 
 
 class Thumbnail(ThumbnailScene):
     META = META
 
     def artwork(self):
-        # A moment part-way round, so the chain is spread out and the ink
-        # shows a partly-drawn heart - the finished curve alone loses the
-        # circles, and t=0 collapses every arm onto one line.
+        # Part-way round, so the chain is spread out and the ink shows a
+        # partly-drawn heart: the finished curve alone hides the circles, and
+        # t=0 collapses every arm onto one line.
         snap = 0.785
         pts = arms(snap)
         group = VGroup()
@@ -217,18 +216,13 @@ class Thumbnail(ThumbnailScene):
                              stroke_opacity=0.8).move_to(centre))
             group.add(Line(centre, tip, color=shade, stroke_width=3))
 
-        drawn = VMobject(color=YELLOW, stroke_width=7)
+        drawn = VMobject(color=YELLOW, stroke_width=8)
         drawn.set_points_smoothly(
             [to_scene(heart(snap * i / 200)) for i in range(201)])
-        tip = Dot(pen_at(snap), radius=0.12, color=YELLOW)
+        tip = Dot(pen_at(snap), radius=0.13, color=YELLOW)
 
-        # No ghost of the finished curve behind this: at low opacity it goes
-        # olive where it crosses the blue circles and reads as a smudge.
-        # Scaled up hard: the two smallest circles have radius 1/32 of the
-        # curve at every phase (no snapshot avoids that), so the only way they
-        # read as circles rather than a blob is size.
         picture = VGroup(group, drawn, tip)
-        picture.scale(1.45).move_to(UP * 0.45)
-        head = fit(MathTex(rf"{N_CIRCLES} \text{{ circles}}", font_size=52,
-                           color=YELLOW)).move_to(UP * 3.1)
+        picture.scale(1.12).move_to(UP * 0.5)
+        head = fit(MathTex(rf"{N_CIRCLES} \text{{ circles}}", font_size=54,
+                           color=YELLOW)).move_to(UP * 2.95)
         return [head, picture]
