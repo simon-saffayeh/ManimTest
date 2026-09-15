@@ -39,11 +39,10 @@ that way; prefer topics that can.
 - [x] `epicycles` — 8 rotating circles draw a heart exactly. 31.8s, 4 beats.
 - [x] `hairyball` — you can't comb a sphere; the wind is still somewhere. 26.4s. First 3D video.
 - [x] `horn` — Gabriel's horn: fill it with pi, never paint it. 33.6s, 3D.
+- [x] `bellpi` — the circle hiding in the bell curve. 28.4s, 3D.
 
 ## Strong candidates
 
-- [ ] **Why pi is in the normal distribution** — a bell curve appears from squaring the
-  integral. Hook: "Why does π show up in a formula about heights and test scores?"
 - [ ] **Why 1 is not prime** — sounds pedantic, is actually about unique factorisation.
 - [ ] **Cantor set has measure zero but uncountably many points** — follows `cantor` nicely.
 - [ ] **Why you can't trisect an angle** — the honest version is field theory, so this needs a

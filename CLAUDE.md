@@ -120,6 +120,15 @@ voice setup cannot be skipped. Captions must go through `self.caption(...)`, whi
 swings away with the camera. Rotate the *mobjects* rather than flying the camera continuously;
 ambient camera rotation fights fixed-in-frame captions. See `videos/hairyball.py`.
 
+**Height goes along z, not y.** A near-edge-on camera (`phi` close to 90) foreshortens the
+xy-plane by `cos(phi)` - at `phi=88` that is 3.5%, so a curve plotted as `[x, f(x), 0]` renders
+as an almost flat squiggle. Plot it as `[x, 0, f(x)]`. Measured in `bellpi`: the curve went
+from a flat line to 974px tall with no other change.
+
+**Use `Dot3D`, not `Dot`.** A `Dot` is a flat disc in the xy-plane; an edge-on camera sees it
+side-on and it disappears entirely (measured: 0 red pixels on screen). `Dot3D` is a sphere and
+reads from any angle.
+
 **Keep a caption on screen across a `move_camera`.** Fading the old one out, moving, then
 fading the new one in leaves seconds of untexted video - which fails muted playback. Cross-fade
 the captions first, then move.
