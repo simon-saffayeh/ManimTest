@@ -102,6 +102,12 @@ is far stronger, and it buys the narration time to set up while the eye is alrea
 itself) are the pattern to copy. Where the topic allows it, spend the animation budget on
 beat 1 rather than on the payoff.
 
+**Shorter beats retention better than complete.** A 45-55s Short spends most of its
+back half losing people. Three beats at ~30s outperforms four at ~50s: cut the beat, not the
+words inside it, and never let the screen hold still while the narrator catches up. `epicycles`
+is the short form done right - 3 beats, 65 words, 24s, and the animation runs continuously
+underneath all three so no beat ever opens on a static frame.
+
 **Pacing: ~2.6 words/sec** (measured for Jesse; Roger was 2.85). `META.words_budget` does the arithmetic:
 40s ≈ 114 words. Four beats is the usual shape.
 
