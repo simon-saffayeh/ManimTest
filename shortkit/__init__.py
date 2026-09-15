@@ -8,7 +8,8 @@ Importing this applies the 9:16 canvas, so video modules can simply do:
 from . import canvas
 from .canvas import SAFE_W, fit, label
 from .meta import VideoMeta
-from .scene import PANEL_CENTER, TITLE_CENTER, ShortScene, ThumbnailScene
+from .scene import (PANEL_CENTER, TITLE_CENTER, ShortScene, ShortScene3D,
+                    ThumbnailScene)
 from .voice import Voice, presets, resolve, speech_service
 
 canvas.apply()
@@ -18,6 +19,7 @@ __all__ = [
     "PANEL_CENTER",
     "TITLE_CENTER",
     "ShortScene",
+    "ShortScene3D",
     "ThumbnailScene",
     "VideoMeta",
     "Voice",

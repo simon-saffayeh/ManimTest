@@ -111,6 +111,19 @@ underneath all three so no beat ever opens on a static frame.
 **Pacing: ~2.6 words/sec** (measured for Jesse; Roger was 2.85). `META.words_budget` does the arithmetic:
 40s ≈ 114 words. Four beats is the usual shape.
 
+## 3D videos
+
+`ShortScene3D` (in `shortkit.scene`) is `ThreeDScene` + `ShortScene`. The MRO matters:
+`ThreeDScene` first so its camera wins, `construct()` still inherited from `ShortScene` so the
+voice setup cannot be skipped. Captions must go through `self.caption(...)`, which calls
+`add_fixed_in_frame_mobjects` - a panel added with plain `self.add()` lives in world space and
+swings away with the camera. Rotate the *mobjects* rather than flying the camera continuously;
+ambient camera rotation fights fixed-in-frame captions. See `videos/hairyball.py`.
+
+**Keep a caption on screen across a `move_camera`.** Fading the old one out, moving, then
+fading the new one in leaves seconds of untexted video - which fails muted playback. Cross-fade
+the captions first, then move.
+
 ## Traps already paid for
 
 - `config.frame_width` does **not** follow `pixel_width`. `shortkit.canvas` sets it; if you

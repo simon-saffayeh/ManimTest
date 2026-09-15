@@ -6,7 +6,7 @@ so it is impossible to author a video that forgets the voice setup.
 
 from __future__ import annotations
 
-from manim import MathTex, Scene, Text, VGroup, DOWN
+from manim import MathTex, Scene, Text, ThreeDScene, VGroup, DOWN
 
 from manim_voiceover import VoiceoverScene
 
@@ -55,6 +55,26 @@ class ShortScene(VoiceoverScene):
         group = VGroup(*[MathTex(line, font_size=size) for line in lines])
         group.arrange(DOWN, buff=buff)
         return fit(group).move_to(center)
+
+
+class ShortScene3D(ThreeDScene, ShortScene):
+    """A narrated Short with a moving camera.
+
+    Same contract as ShortScene - set META, implement storyboard(), wrap
+    narration in self.beat(). The MRO matters: ThreeDScene must come first so
+    its camera and renderer win, while construct() is still inherited from
+    ShortScene, which wires the speech service.
+
+    Captions must be added with self.caption(...) rather than self.add(), or
+    they are placed in world space and swing around with the camera.
+    """
+
+    def caption(self, *lines: str, **kwargs):
+        """A lower-third panel pinned to the screen, not to the scene."""
+        panel = self.panel(*lines, **kwargs)
+        self.add_fixed_in_frame_mobjects(panel)
+        self.remove(panel)      # add_fixed_in_frame also adds it; fade it in later
+        return panel
 
 
 class ThumbnailScene(Scene):

@@ -37,6 +37,7 @@ that way; prefer topics that can.
 - [x] `galton` — a bell curve building itself from falling balls. 45s
 - [x] `collatz` — 79 trajectories crashing to 1; still unproven. 
 - [x] `epicycles` — 8 rotating circles draw a heart exactly. 31.8s, 4 beats.
+- [x] `hairyball` — you can't comb a sphere; the wind is still somewhere. 26.4s. First 3D video.
 
 ## Strong candidates
 
@@ -44,9 +45,6 @@ that way; prefer topics that can.
   integral. Hook: "Why does π show up in a formula about heights and test scores?"
 - [ ] **Gabriel's horn** — finite volume, infinite surface area. One rotation animation.
   Note the overlap with `koch`; it needs a different framing to avoid repeating that beat.
-- [ ] **Why you can't comb a hairy ball** — one spinning sphere with a vector field. Hook:
-  "somewhere on Earth right now, the wind is not blowing." Needs a 3D scene, which no video
-  has used yet — budget time for that.
 - [ ] **Why 1 is not prime** — sounds pedantic, is actually about unique factorisation.
 - [ ] **Cantor set has measure zero but uncountably many points** — follows `cantor` nicely.
 - [ ] **Why you can't trisect an angle** — the honest version is field theory, so this needs a
