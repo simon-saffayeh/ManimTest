@@ -43,6 +43,7 @@ that way; prefer topics that can.
 - [x] `chaos` — 15 double pendulums, 0.17 degrees apart. 31.9s. Median motion 5.61.
 - [x] `seeds` — phyllotaxis: why sunflowers use 137.5 degrees. 32.7s. Median motion 7.89.
 - [x] `fourcolour` — four colours always suffice; an odd wheel shows three can fail. 29.3s.
+- [x] `kepler` — equal areas in equal times, four live orbits. 28.4s. Median motion 1.39.
 
 ## Strong candidates
 
