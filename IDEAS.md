@@ -45,6 +45,7 @@ that way; prefer topics that can.
 - [x] `fourcolour` — four colours always suffice; an odd wheel shows three can fail. 29.3s.
 - [x] `kepler` — equal areas in equal times, four live orbits. 28.4s. Median motion 1.39.
 - [x] `sync` — Kuramoto: 28 oscillators lock with no conductor. 27.5s. Median motion 3.85.
+- [x] `turing` — Gray-Scott reaction-diffusion, 12,100 live cells. 34.4s. Median 0.89, mean 2.93.
 
 ## Strong candidates
 
