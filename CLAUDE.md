@@ -126,6 +126,15 @@ frame-to-frame difference. Median across the library: `epicycles` 0.64, `bellpi`
 holding still even if no single stretch is technically frozen. For a video whose selling
 point is the animation, aim high and check rather than trusting the eye.
 
+**`Dot3D` is a sphere mesh - do not use dozens of them.** 48 `Dot3D` heads rebuilt every
+frame took ~20s per beat segment and the render had to be killed; swapping to flat `Dot`
+rendered the same video in a fraction of the time and looks identical at that size. Reserve
+`Dot3D` for the few points that must read as solid from any angle (see the `bellpi` note).
+
+**Trails rescue a sparse swarm.** 60 gravitating bodies as bare dots read as a scatter of
+specks on a black field; adding a dissipating `TracedPath` per body made the mutual orbiting
+legible without changing the simulation at all.
+
 **Tie the simulation's turning point to a beat boundary.** A precomputed sim runs on its own
 clock, and if the interesting moment lands mid-sentence the animation contradicts the script -
 `sync` locked while beat 2 still said the bar sat at nothing, `flock` finished converging six

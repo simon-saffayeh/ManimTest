@@ -47,6 +47,8 @@ that way; prefer topics that can.
 - [x] `sync` — Kuramoto: 28 oscillators lock with no conductor. 27.5s. Median motion 3.85.
 - [x] `turing` — Gray-Scott reaction-diffusion, 12,100 live cells. 34.4s. Median 0.89, mean 2.93.
 - [x] `flock` — 140 boids, three rules, no leader. 29.1s. Median motion 4.69.
+- [x] `lorenz` — 48 trajectories tracing the strange attractor. 32.8s. Median 0.75.
+- [x] `threebody` — two bodies solvable, three not; ends on 60. 26.7s. Median 0.58.
 
 ## Strong candidates
 
