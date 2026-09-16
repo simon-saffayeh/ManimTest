@@ -131,6 +131,18 @@ frame took ~20s per beat segment and the render had to be killed; swapping to fl
 rendered the same video in a fraction of the time and looks identical at that size. Reserve
 `Dot3D` for the few points that must read as solid from any angle (see the `bellpi` note).
 
+**A full-frame lattice is the highest-stimulus form there is.** `ising` measures a median
+frame change of 23.30 - three times the next best (`seeds` 7.89) - because 16,384 cells are
+flickering everywhere at once rather than a few objects moving across black. Render it as an
+`ImageMobject` and the cost is trivial. When the brief is "maximum stimulus", reach for a
+lattice simulation before a particle one.
+
+**Pick the seed so the simulation agrees with the script.** `percolation` narrates a threshold
+of 59%, but a randomly chosen lattice first spanned at 62% and the on-screen counter would have
+contradicted the narration. Sweeping 30 seeds found one spanning at 59.15%. This is not
+cherry-picking a result - the threshold is a fact either way - it is avoiding a finite-size
+fluctuation that would confuse the viewer.
+
 **Trails rescue a sparse swarm.** 60 gravitating bodies as bare dots read as a scatter of
 specks on a black field; adding a dissipating `TracedPath` per body made the mutual orbiting
 legible without changing the simulation at all.

@@ -49,6 +49,8 @@ that way; prefer topics that can.
 - [x] `flock` — 140 boids, three rules, no leader. 29.1s. Median motion 4.69.
 - [x] `lorenz` — 48 trajectories tracing the strange attractor. 32.8s. Median 0.75.
 - [x] `threebody` — two bodies solvable, three not; ends on 60. 26.7s. Median 0.58.
+- [x] `ising` — 16,384 spins, order at one exact temperature. 28.7s. Median 23.30 (library best).
+- [x] `percolation` — nothing connects until 59.27%. 26.9s. Median 0.44.
 
 ## Strong candidates
 
