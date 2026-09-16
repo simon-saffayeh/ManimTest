@@ -46,6 +46,7 @@ that way; prefer topics that can.
 - [x] `kepler` — equal areas in equal times, four live orbits. 28.4s. Median motion 1.39.
 - [x] `sync` — Kuramoto: 28 oscillators lock with no conductor. 27.5s. Median motion 3.85.
 - [x] `turing` — Gray-Scott reaction-diffusion, 12,100 live cells. 34.4s. Median 0.89, mean 2.93.
+- [x] `flock` — 140 boids, three rules, no leader. 29.1s. Median motion 4.69.
 
 ## Strong candidates
 

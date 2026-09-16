@@ -126,6 +126,18 @@ frame-to-frame difference. Median across the library: `epicycles` 0.64, `bellpi`
 holding still even if no single stretch is technically frozen. For a video whose selling
 point is the animation, aim high and check rather than trusting the eye.
 
+**Tie the simulation's turning point to a beat boundary.** A precomputed sim runs on its own
+clock, and if the interesting moment lands mid-sentence the animation contradicts the script -
+`sync` locked while beat 2 still said the bar sat at nothing, `flock` finished converging six
+seconds before the narration mentioned it. Work out where each beat ends from the word counts,
+then tune the simulation so the payoff happens inside the right one.
+
+**Motion and beauty can pull against each other; measure both.** In `turing` the
+never-settling Gray-Scott regime was 16x more active late-stage but had half the contrast
+(0.12-0.17 vs 0.29-0.31) and read as a washed-out haze. Crispness won, and the motion came
+from a high step rate plus frequent re-seeding instead. Check contrast (std/max) alongside
+frame-to-frame change rather than optimising one blindly.
+
 **Topic choice caps motion density.** A continuous simulation (pendulums, orbits, a
 parameter dialled live) sustains high motion for free; a combinatorial topic that steps
 between discrete states does not, and no amount of added shimmer fixes it - `fourcolour`
