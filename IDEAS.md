@@ -42,6 +42,7 @@ that way; prefer topics that can.
 - [x] `bellpi` — the circle hiding in the bell curve. 28.4s, 3D.
 - [x] `chaos` — 15 double pendulums, 0.17 degrees apart. 31.9s. Median motion 5.61.
 - [x] `seeds` — phyllotaxis: why sunflowers use 137.5 degrees. 32.7s. Median motion 7.89.
+- [x] `fourcolour` — four colours always suffice; an odd wheel shows three can fail. 29.3s.
 
 ## Strong candidates
 
@@ -52,8 +53,6 @@ that way; prefer topics that can.
 
 - [ ] **Why a rope round the Earth needs only 6.28 m of slack** — the answer does not depend
   on the planet's size at all, which is the whole hook.
-- [ ] **Why every map needs only four colours** — state the theorem honestly, including that
-  the proof is by computer and nobody can read it in full.
 
 ## Weaker — needs a better visual before attempting
 

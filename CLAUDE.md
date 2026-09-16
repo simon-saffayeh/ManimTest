@@ -126,6 +126,12 @@ frame-to-frame difference. Median across the library: `epicycles` 0.64, `bellpi`
 holding still even if no single stretch is technically frozen. For a video whose selling
 point is the animation, aim high and check rather than trusting the eye.
 
+**Topic choice caps motion density.** A continuous simulation (pendulums, orbits, a
+parameter dialled live) sustains high motion for free; a combinatorial topic that steps
+between discrete states does not, and no amount of added shimmer fixes it - `fourcolour`
+measures 0.11 against `seeds` 7.89 despite two attempts at a sweeping highlight. Decide
+which kind of topic you have before promising "lots of moving parts".
+
 **A crowd of independent movers is the cheapest way to get there.** `chaos` runs 15
 pendulums x (2 rods + 2 bobs) = 60 live mobjects plus 15 traced paths off one precomputed
 physics table. Precompute the simulation at import; integrating inside an updater couples
