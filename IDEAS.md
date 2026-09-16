@@ -40,8 +40,8 @@ that way; prefer topics that can.
 - [x] `hairyball` — you can't comb a sphere; the wind is still somewhere. 26.4s. First 3D video.
 - [x] `horn` — Gabriel's horn: fill it with pi, never paint it. 33.6s, 3D.
 - [x] `bellpi` — the circle hiding in the bell curve. 28.4s, 3D.
-- [x] `chaos` — 15 double pendulums, 0.17 degrees apart. 31.9s. Busiest video: median
-  frame-to-frame change 5.61 vs 1.33 (bellpi) and 0.64 (epicycles).
+- [x] `chaos` — 15 double pendulums, 0.17 degrees apart. 31.9s. Median motion 5.61.
+- [x] `seeds` — phyllotaxis: why sunflowers use 137.5 degrees. 32.7s. Median motion 7.89.
 
 ## Strong candidates
 
