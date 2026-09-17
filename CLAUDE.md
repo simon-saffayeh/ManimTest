@@ -67,9 +67,11 @@ accidentally skip voice setup. `title` is what gets burned into the thumbnail (k
    while the narrator is still talking - about 4s per beat, which on a 14-beat episode is
    30s of dead frames. End on the content; clear it as the next beat opens. At most ~4
    things on screen.
-3. **Verify before reporting.** Exit code 0 is not evidence. `build.py check` must pass, and
-   you must *look at* extracted frames.
-4. **Never claim a render succeeded without running it.**
+3. **Nothing on screen may freeze.** Drive continuous motion from a dt updater, never from
+   `play(tracker.animate...)` - see the trap below. Every render gets a stall scan.
+4. **Verify before reporting.** Exit code 0 is not evidence. `build.py check` must pass, you
+   must run the stall and caption scans, and you must *look at* extracted frames.
+5. **Never claim a render succeeded without running it.**
 
 ## Visual style
 
@@ -120,69 +122,121 @@ voice setup cannot be skipped. Captions must go through `self.caption(...)`, whi
 swings away with the camera. Rotate the *mobjects* rather than flying the camera continuously;
 ambient camera rotation fights fixed-in-frame captions. See `videos/hairyball.py`.
 
-**Motion density is measurable - use it.** Extract at 5fps and take the mean absolute
-frame-to-frame difference. Median across the library: `epicycles` 0.64, `bellpi` 1.33,
-`chaos` 5.61. Under ~0.15 is a frozen frame; a median below ~1 means the video is mostly
-holding still even if no single stretch is technically frozen. For a video whose selling
-point is the animation, aim high and check rather than trusting the eye.
+## Simulation-driven videos
 
-**`Dot3D` is a sphere mesh - do not use dozens of them.** 48 `Dot3D` heads rebuilt every
-frame took ~20s per beat segment and the render had to be killed; swapping to flat `Dot`
-rendered the same video in a fraction of the time and looks identical at that size. Reserve
-`Dot3D` for the few points that must read as solid from any angle (see the `bellpi` note).
+Most of the library is now simulations. These notes are paid for in render time.
 
-**A full-frame lattice is the highest-stimulus form there is.** `ising` measures a median
-frame change of 23.30 - three times the next best (`seeds` 7.89) - because 16,384 cells are
-flickering everywhere at once rather than a few objects moving across black. Render it as an
-`ImageMobject` and the cost is trivial. When the brief is "maximum stimulus", reach for a
-lattice simulation before a particle one.
+### Motion density
 
-**Check the neighbourhood shape on a lattice automaton.** A 3x3 block makes waves propagate
-in axis-aligned steps, so `spiral` came out with square, circuit-board spirals - a lattice
-artefact, not physics. A disc-shaped neighbourhood (radius 2.5, 20 cells) with a proportionally
-higher threshold rounds the fronts off and looks like the real thing.
+**Measure it; do not trust the eye.** Extract at 5fps and take the mean absolute
+frame-to-frame difference between consecutive frames:
+
+```
+ffmpeg -i video.mp4 -vf "fps=5,scale=270:-1" f_%04d.png
+```
+
+Anything under ~0.15 is a frozen frame. A median below ~1 means the video is mostly holding
+still even if no single stretch is technically frozen. Library baseline, worst to best:
+
+| video        | median | what it is                         |
+|--------------|--------|------------------------------------|
+| `fourcolour` | 0.11   | discrete state changes - a failure |
+| `percolation`| 0.44   | gradual lattice fill               |
+| `threebody`  | 0.58   | a few bodies on black              |
+| `epicycles`  | 0.64   | one mechanism                      |
+| `lorenz`     | 0.75   | 48 slow trajectories               |
+| `turing`     | 0.89   | reaction-diffusion, bursty         |
+| `bellpi`     | 1.33   | one surface                        |
+| `kepler`     | 1.39   | four orbits                        |
+| `life`       | 3.73   | 96x96 lattice                      |
+| `sync`       | 3.85   | 28 oscillators                     |
+| `flock`      | 4.69   | 140 boids                          |
+| `chaos`      | 5.61   | 15 double pendulums                |
+| `seeds`      | 7.89   | 400 seeds re-laid live             |
+| `ising`      | 23.30  | 16,384 spins                       |
+| `spiral`     | 29.44  | excitable medium, library best     |
+
+**Aim for a median above ~4** when the brief mentions stimulation. The user asks for this
+repeatedly and it is the single most reliable signal of whether a video will satisfy.
+
+### Choosing a topic for motion
+
+**Topic choice caps motion density, so decide before promising anything.** A continuous
+simulation (pendulums, orbits, a lattice, a parameter dialled live) sustains high motion for
+free. A combinatorial topic that steps between discrete states does not, and no amount of
+added shimmer fixes it - `fourcolour` measures 0.11 despite two attempts at a sweeping
+highlight. Say so upfront rather than discovering it after the render.
+
+**A full-frame lattice is the highest-stimulus form there is.** `ising` and `spiral` are 5-6x
+the next best because every cell is live rather than a few objects moving across black. Render
+it as an `ImageMobject` (with `RESAMPLING_ALGORITHMS["nearest"]`), never as thousands of
+`Square`s - a VGroup that size will not render in reasonable time.
+
+**A crowd of independent movers is the next best thing.** `chaos` runs 15 pendulums x (2 rods
++ 2 bobs) = 60 live mobjects plus 15 traced paths off one precomputed table.
+
+**Trails rescue a sparse swarm.** 60 gravitating bodies as bare dots read as specks on black;
+a dissipating `TracedPath` per body made the mutual orbiting legible without touching the
+simulation.
+
+### Running the simulation
+
+**Precompute at import.** Integrating inside an updater couples the physics to however often
+manim happens to call it. Build a table of every frame, then index it from the clock.
+
+**Tie the turning point to a beat boundary.** A precomputed sim runs on its own clock, and if
+the interesting moment lands mid-sentence the animation contradicts the script - `sync` locked
+while beat 2 still said the bar sat at nothing; `flock` finished converging six seconds before
+the narration mentioned it. Work out where each beat ends from the word counts, then tune the
+simulation so the payoff happens inside the right one.
 
 **Pick the seed so the simulation agrees with the script.** `percolation` narrates a threshold
 of 59%, but a randomly chosen lattice first spanned at 62% and the on-screen counter would have
 contradicted the narration. Sweeping 30 seeds found one spanning at 59.15%. This is not
 cherry-picking a result - the threshold is a fact either way - it is avoiding a finite-size
-fluctuation that would confuse the viewer.
+fluctuation that would confuse the viewer. Document the sweep in the module docstring.
 
-**Trails rescue a sparse swarm.** 60 gravitating bodies as bare dots read as a scatter of
-specks on a black field; adding a dissipating `TracedPath` per body made the mutual orbiting
-legible without changing the simulation at all.
+**Quote on-screen values, not a side study.** `ising`'s closing caption originally cited a
+separate equilibrium run while the video showed different numbers. Captions must match what
+the viewer can actually see.
 
-**Tie the simulation's turning point to a beat boundary.** A precomputed sim runs on its own
-clock, and if the interesting moment lands mid-sentence the animation contradicts the script -
-`sync` locked while beat 2 still said the bar sat at nothing, `flock` finished converging six
-seconds before the narration mentioned it. Work out where each beat ends from the word counts,
-then tune the simulation so the payoff happens inside the right one.
+**Scale from the measured envelope, not the theoretical worst case.** `epicycles` radii sum to
+1.4375 but the arms are phase-locked and never all align - the true envelope is 1.034, so the
+conservative bound wasted a third of the frame. Sample the actual trajectory and fit to that.
+
+**Watch for physics that is real but unusable.** An equal-mass gravitating cluster genuinely
+evaporates (measured extent 5.9 to 17.8); `threebody` runs its many-body beat in a soft
+confining bowl and says so in the source. Note any such compromise rather than hiding it.
+
+### Lattice automata
+
+**Check the neighbourhood shape.** A 3x3 block makes waves propagate in axis-aligned steps, so
+`spiral` came out with square, circuit-board spirals - a lattice artefact, not physics. A
+disc-shaped neighbourhood (radius 2.5, 20 cells) with a proportionally higher threshold rounds
+the fronts off.
+
+**Size the grid to the feature, not the frame.** The Gosper gun in `life` is ~36 cells wide and
+was an unreadable speck on a 160-grid; 96 made it legible.
 
 **Motion and beauty can pull against each other; measure both.** In `turing` the
 never-settling Gray-Scott regime was 16x more active late-stage but had half the contrast
 (0.12-0.17 vs 0.29-0.31) and read as a washed-out haze. Crispness won, and the motion came
-from a high step rate plus frequent re-seeding instead. Check contrast (std/max) alongside
+from a high step rate plus frequent re-seeding. Check contrast (std/max) alongside
 frame-to-frame change rather than optimising one blindly.
 
-**Topic choice caps motion density.** A continuous simulation (pendulums, orbits, a
-parameter dialled live) sustains high motion for free; a combinatorial topic that steps
-between discrete states does not, and no amount of added shimmer fixes it - `fourcolour`
-measures 0.11 against `seeds` 7.89 despite two attempts at a sweeping highlight. Decide
-which kind of topic you have before promising "lots of moving parts".
-
-**A crowd of independent movers is the cheapest way to get there.** `chaos` runs 15
-pendulums x (2 rods + 2 bobs) = 60 live mobjects plus 15 traced paths off one precomputed
-physics table. Precompute the simulation at import; integrating inside an updater couples
-the physics to however often manim calls it.
+### 3D specifics
 
 **Height goes along z, not y.** A near-edge-on camera (`phi` close to 90) foreshortens the
 xy-plane by `cos(phi)` - at `phi=88` that is 3.5%, so a curve plotted as `[x, f(x), 0]` renders
 as an almost flat squiggle. Plot it as `[x, 0, f(x)]`. Measured in `bellpi`: the curve went
 from a flat line to 974px tall with no other change.
 
-**Use `Dot3D`, not `Dot`.** A `Dot` is a flat disc in the xy-plane; an edge-on camera sees it
-side-on and it disappears entirely (measured: 0 red pixels on screen). `Dot3D` is a sphere and
-reads from any angle.
+**`Dot` vs `Dot3D` is a judgement call, and both directions have bitten.** A flat `Dot` is a
+disc in the xy-plane: at `phi=88` an edge-on camera makes it vanish entirely (measured: 0 red
+pixels in `bellpi`). But `Dot3D` is a sphere mesh, and 48 of them rebuilt every frame made the
+`lorenz` render so slow it had to be killed - flat `Dot`s at that size looked identical and
+rendered in a fraction of the time. Rule of thumb: `Dot3D` for a handful of points that must
+read as solid at a steep camera angle, flat `Dot` for dozens.
 
 **Keep a caption on screen across a `move_camera`.** Fading the old one out, moving, then
 fading the new one in leaves seconds of untexted video - which fails muted playback. Cross-fade
@@ -225,13 +279,20 @@ the captions first, then move.
 - **A continuous motion must be driven by a dt updater, never by
   `play(tracker.animate...)`.** A tracker animated that way only advances during
   *that* `play` call, so the motion freezes solid during every other animation and
-  every `wait` - including captions fading in and the closing hold. The first cut of
-  `epicycles` was static for 6.7s of 24s and looked, correctly, like it had stopped.
+  every `wait` - including captions fading in and the closing hold. This has shipped twice:
+  the first cut of `epicycles` was static for 6.7s of 24s, and `bellpi` was frozen for
+  **19.6s of 28.2s** because each beat rendered a held state and only the camera moved. Both
+  looked, correctly, like they had stopped. The user notices this immediately and it is the
+  single most common complaint.
   Use `tracker.add_updater(lambda m, dt: m.increment_value(dt * RATE))` and
   `self.add(tracker)`, then let beats `self.wait()` while it runs.
-  **Verify with a stall scan, not by eye:** extract at 10fps and compare consecutive
+  **Verify with a stall scan, not by eye:** extract at 5-10fps and compare consecutive
   frames - any run below ~0.15 mean abs difference is a freeze. Four spot-checked
   frames will not catch this.
+- **An effect too faint to register counts as static.** A sweeping highlight added to
+  `fourcolour` at `fill_opacity` 0.16 was invisible in the scan and on screen, even though the
+  updater was verified to be running 62 times per `play` call. If a fix does not move the
+  measured number, it is not a fix - raise the amplitude or change the approach.
 - **`-s` stills skip animations**, so updaters and `always_redraw` never fire. A still can show
   a moving object frozen at its start and look like a bug that isn't. Verify anything moving by
   extracting frames from the finished mp4 with ffmpeg.
@@ -243,11 +304,46 @@ the captions first, then move.
 
 ## Workflow for a new video
 
-1. Pick the topic; decide the beats and the one animation that carries the idea.
-2. Write `videos/<slug>.py`, including `META` with real publishing copy.
-3. `build.py stills <slug> -n 0,N` at a few points; **open the PNGs** and check for overlaps,
-   clipping and safe-zone violations.
-4. `build.py render <slug>`.
-5. Extract 3–4 frames from `out/<slug>/video.mp4` and look at them, especially anything
-   animated by an updater.
-6. Report the real duration, the output paths, and anything you had to compromise on.
+1. **Pick the topic.** Check `IDEAS.md`. If the brief mentions stimulation, pick a continuous
+   simulation or a lattice - see "Choosing a topic for motion".
+2. **Verify the maths first, in a scratch script.** Every number that will appear on screen or
+   in the narration gets computed and checked before any animation code is written. This has
+   caught real errors: a map about to be called 4-chromatic was 3-colourable; a percolation
+   lattice spanned at 62% while the script said 59%; a "needs four colours" claim was simply
+   false. Put the measured values in the module docstring so the next session can see the
+   working.
+3. **Write `videos/<slug>.py`** including `META` with real publishing copy.
+4. **Render the thumbnail first** - it is free (no TTS) and catches layout problems:
+   `.venv/Scripts/python.exe -m manim -s -qm --format=png videos/<slug>.py Thumbnail`.
+   Open the PNG and look at it.
+5. **`build.py render <slug>`.**
+6. **Run all three scans** (below). Fix and re-render until they pass.
+7. **Extract 3-4 frames and look at them**, especially anything updater-driven.
+8. **Update `IDEAS.md`** (tick the topic, record duration and median motion), commit, push.
+9. **Report** the real duration, the gate result, the measured motion, and anything you
+   compromised on.
+
+### The three scans
+
+Run these on every render. They catch what the eye does not.
+
+**Stall scan.** Extract at 5fps, take the mean absolute difference between consecutive frames.
+Report the median and the count below 0.15. Any run of 2+ frames under 0.15 is a freeze and
+must be fixed, not explained away.
+
+**Caption scan.** Take the bottom band (roughly rows 0.72-0.92 of the frame) and count lit
+pixels. Only the cold open (~1-2s) may be untexted - the guide requires every load-bearing
+claim to be readable with the sound off. Mid-video gaps are bugs.
+
+**Safe-zone check.** Compute the on-screen extent of the simulation over its whole run and
+compare against `|x| <= 1.7` and `y` in `[-2.4, 3.04]`. Do this from the data before rendering,
+not by eyeballing a frame afterwards.
+
+## Reporting to the user
+
+Say plainly when something did not work. Videos have been reported as: too static to ship
+(and rebuilt), caught in a motion-versus-beauty tradeoff that could not be won, and a topic
+that structurally resisted the brief. State the cause, record the lesson here, and move on -
+do not quietly ship a weak result or bury the compromise.
+
+When a measurement contradicts an earlier claim of mine, correct it in one line and continue.
