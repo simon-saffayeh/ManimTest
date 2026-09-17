@@ -157,6 +157,7 @@ still even if no single stretch is technically frozen. Library baseline, worst t
 | `catmap`     | 18.17  | 151x151 picture sheared, exact loop|
 | `ising`      | 23.30  | 16,384 spins                       |
 | `spiral`     | 29.44  | excitable medium                   |
+| `traffic`    | 35.84  | space-time road, scrolling         |
 | `hexagons`   | 37.44  | full-frame drifting Voronoi, best  |
 
 **Aim for a median above ~4** when the brief mentions stimulation. The user asks for this
@@ -260,6 +261,14 @@ about text:
   built the same way the base class builds the title (`weight="BOLD", font_size=48`, scaled
   to `SAFE_W + 0.2`, at `TITLE_CENTER`) and return it with the artwork.
 - **The emulated stall scan needs no area scaling** when the image is the frame.
+
+**A process that completes mid-video leaves the rest of the screen dead.** `schelling`
+finished segregating at t=8s and the emulated stall scan showed 149 of 170 samples static -
+25 seconds of frozen city. Slowing the process fixed the stall but stopped it reaching the
+number the caption quoted (0.589 against a claimed 0.74). The fix is to tune the rate so the
+process *just* completes at the end of the runtime, and add a trickle of churn that keeps
+pixels changing without moving the equilibrium. Check both the stall scan and the final value
+after any such tuning - they pull in opposite directions.
 
 **Keep a relaxing system moving with a rigid drift.** Lloyd relaxation converges (0.028 px of
 seed movement per frame by the end) and the sheet would sit still for the last ten seconds. A

@@ -57,6 +57,8 @@ that way; prefer topics that can.
 - [x] `catmap` — Arnold's cat map: scramble 25 times, returns exactly; loops on itself. 33.2s. Median 18.17.
 - [x] `sandpile` — abelian sandpile: topple in any order, identical pile. 31.4s. Median 4.00.
 - [x] `hexagons` — full-frame Voronoi sheet; Euler's average 6, Lloyd relaxation to honeycomb. 34.6s. Median 37.44 (library best).
+- [x] `polya` — random walk comes home in 2D, not in 3D. 28.9s. Median 4.31.
+- [x] `traffic` — phantom jams from nothing but random braking. 31.2s. Median 35.84.
 
 ## Strong candidates
 
