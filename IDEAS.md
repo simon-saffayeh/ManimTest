@@ -54,6 +54,7 @@ that way; prefer topics that can.
 - [x] `life` — Conway's four rules, ending on a glider gun. 26.7s. Median 3.73.
 - [x] `spiral` — excitable media, why heart waves spiral. 29.9s. Median 29.44 (library best).
 - [x] `waves` — superposition on a 160x160 surface; two pulses pass through. 27.2s. Median 2.55.
+- [x] `catmap` — Arnold's cat map: scramble 25 times, returns exactly; loops on itself. 33.2s. Median 18.17.
 
 ## Strong candidates
 

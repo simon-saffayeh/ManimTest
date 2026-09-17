@@ -153,6 +153,7 @@ still even if no single stretch is technically frozen. Library baseline, worst t
 | `flock`      | 4.69   | 140 boids                          |
 | `chaos`      | 5.61   | 15 double pendulums                |
 | `seeds`      | 7.89   | 400 seeds re-laid live             |
+| `catmap`     | 18.17  | 151x151 picture sheared, exact loop|
 | `ising`      | 23.30  | 16,384 spins                       |
 | `spiral`     | 29.44  | excitable medium, library best     |
 
@@ -214,6 +215,21 @@ measuring max|u| per second, not by eye. Add to both levels (or set `up = u.copy
 three thin rings moving ~2px per sample and measured under 0.15 for its first 0.6s. Nothing was
 stuck; too little of the frame was changing. The fix was more motion - faster waves and seven
 drops already rippling at frame 0 - not a looser threshold.
+
+**The dt clock lags video time by about one frame per `play()`/`wait()` call.** Measured
+in `catmap`: video time 3/10/20/30s showed sim time 2.90/9.80/19.70/29.57s - a lag of 0.10,
+0.20, 0.30, 0.43s, growing with the number of animation calls, not with time. Anything that
+must land on a video timestamp (a loop point, a "step N" readout) must be driven by the clock
+tracker, never by wall-clock arithmetic - and leave a real margin at the end: a two-frame
+closing wait left the counter reading 24/25 on a frame whose picture had already returned,
+because the clock finished a hair under the target. Guard `int(t // step)` with a small
+epsilon for the same reason.
+
+**Build a loop from an exact period, not a fade.** `catmap`'s last frame is its first frame
+because the map is a permutation with period 25 on a 151-grid, verified bit-identical before
+scripting. Check the loop by comparing the *true* last frame (`-sseof -0.04`, one frame's
+width; `-0.01` lands past the end and returns nothing) against the first over the picture
+region only; a codec-only mismatch measures under the frame-0-vs-frame-1 baseline.
 
 **Watch for physics that is real but unusable.** An equal-mass gravitating cluster genuinely
 evaporates (measured extent 5.9 to 17.8); `threebody` runs its many-body beat in a soft
