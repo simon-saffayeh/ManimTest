@@ -55,6 +55,7 @@ that way; prefer topics that can.
 - [x] `spiral` — excitable media, why heart waves spiral. 29.9s. Median 29.44 (library best).
 - [x] `waves` — superposition on a 160x160 surface; two pulses pass through. 27.2s. Median 2.55.
 - [x] `catmap` — Arnold's cat map: scramble 25 times, returns exactly; loops on itself. 33.2s. Median 18.17.
+- [x] `sandpile` — abelian sandpile: topple in any order, identical pile. 31.4s. Median 4.00.
 
 ## Strong candidates
 

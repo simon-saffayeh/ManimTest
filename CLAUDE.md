@@ -150,6 +150,7 @@ still even if no single stretch is technically frozen. Library baseline, worst t
 | `kepler`     | 1.39   | four orbits                        |
 | `life`       | 3.73   | 96x96 lattice                      |
 | `sync`       | 3.85   | 28 oscillators                     |
+| `sandpile`   | 4.00   | 141x141 pile, bursty avalanches    |
 | `flock`      | 4.69   | 140 boids                          |
 | `chaos`      | 5.61   | 15 double pendulums                |
 | `seeds`      | 7.89   | 400 seeds re-laid live             |
@@ -210,6 +211,14 @@ conservative bound wasted a third of the frame. Sample the actual trajectory and
 step, which carries ~100x the energy of the displacement you meant. In `waves` the rain drops
 were injected this way and the surface grew to |u| = 26, saturating the colour map - found by
 measuring max|u| per second, not by eye. Add to both levels (or set `up = u.copy()` after).
+
+**Emulate the stall scan on the frame table before rendering.** For a precomputed lattice,
+colourise every 6th frame, take the mean abs diff, and scale by the picture's share of the
+frame (~0.32 for the standard 3.4-unit square). `sandpile`'s first cut showed 0.0-0.1% of
+cells changing per frame for its first five seconds - a certain stall-scan failure - and the
+fix (a higher drop rate, a wider grid) cost 30 seconds of compute instead of a render. The
+emulation overestimated the final median (5.9 predicted, 4.0 measured), so treat it as a
+pass/fail on quiet runs, not as the number to report.
 
 **Low-signal is not the same as frozen, but fix it anyway.** `waves` at c = 0.30 opened on
 three thin rings moving ~2px per sample and measured under 0.15 for its first 0.6s. Nothing was
