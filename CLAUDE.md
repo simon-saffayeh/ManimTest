@@ -156,7 +156,8 @@ still even if no single stretch is technically frozen. Library baseline, worst t
 | `seeds`      | 7.89   | 400 seeds re-laid live             |
 | `catmap`     | 18.17  | 151x151 picture sheared, exact loop|
 | `ising`      | 23.30  | 16,384 spins                       |
-| `spiral`     | 29.44  | excitable medium, library best     |
+| `spiral`     | 29.44  | excitable medium                   |
+| `hexagons`   | 37.44  | full-frame drifting Voronoi, best  |
 
 **Aim for a median above ~4** when the brief mentions stimulation. The user asks for this
 repeatedly and it is the single most reliable signal of whether a video will satisfy.
@@ -243,6 +244,37 @@ region only; a codec-only mismatch measures under the frame-0-vs-frame-1 baselin
 **Watch for physics that is real but unusable.** An equal-mass gravitating cluster genuinely
 evaporates (measured extent 5.9 to 17.8); `threebody` runs its many-body beat in a soft
 confining bowl and says so in the source. Note any such compromise rather than hiding it.
+
+### Full-frame sheets
+
+**A simulation does not have to live in the 3.4-unit square.** `hexagons` fills the whole
+4.5 x 8 frame with a 135x240 raster (`scale_to_fit_height(config.frame_height)`), and that is
+what "moving visuals not contained in a box" means in practice. The costs are real and all
+about text:
+
+- **Every caption needs a dark backing** - `BackgroundRectangle(mob, BLACK, fill_opacity
+  ~0.74, buff ~0.16)` grouped under the text. Without it the lower third is unreadable on a
+  busy sheet, and the caption scan will still pass because it only counts lit pixels.
+- **`ThumbnailScene` draws the title with no backing.** On a full-frame sheet the white title
+  was the least legible thing on the page. Size a backing in `artwork()` from a ghost `Text`
+  built the same way the base class builds the title (`weight="BOLD", font_size=48`, scaled
+  to `SAFE_W + 0.2`, at `TITLE_CENTER`) and return it with the artwork.
+- **The emulated stall scan needs no area scaling** when the image is the frame.
+
+**Keep a relaxing system moving with a rigid drift.** Lloyd relaxation converges (0.028 px of
+seed movement per frame by the end) and the sheet would sit still for the last ten seconds. A
+slow rigid translation of every seed on the periodic domain keeps the whole frame sliding
+without changing any cell's shape or side count, so the claim is untouched and the scan's
+median went to 40 - the whole frame moves every sample.
+
+**Count graph structure exactly, never from the raster.** A pixel-threshold neighbour count on
+the Voronoi raster gave a mean of 5.37 sides; the true value on a torus is exactly 6 (Euler),
+and scipy's `Voronoi` on the 3x3-tiled seeds returns 6.0000 on every frame. Short shared
+borders fall under any pixel threshold. If a number goes on screen, compute it from geometry.
+
+**Cache expensive frame tables to disk.** 1,022 frames of periodic Voronoi took 164s; the
+thumbnail and the render each import the module. `media/cache/<slug>_<md5 of params>.npz`,
+keyed by every parameter that affects the table, so a change invalidates it automatically.
 
 ### Lattice automata
 

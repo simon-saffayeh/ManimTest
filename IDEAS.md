@@ -56,6 +56,7 @@ that way; prefer topics that can.
 - [x] `waves` — superposition on a 160x160 surface; two pulses pass through. 27.2s. Median 2.55.
 - [x] `catmap` — Arnold's cat map: scramble 25 times, returns exactly; loops on itself. 33.2s. Median 18.17.
 - [x] `sandpile` — abelian sandpile: topple in any order, identical pile. 31.4s. Median 4.00.
+- [x] `hexagons` — full-frame Voronoi sheet; Euler's average 6, Lloyd relaxation to honeycomb. 34.6s. Median 37.44 (library best).
 
 ## Strong candidates
 
