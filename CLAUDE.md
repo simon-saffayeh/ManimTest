@@ -204,6 +204,17 @@ the viewer can actually see.
 1.4375 but the arms are phase-locked and never all align - the true envelope is 1.034, so the
 conservative bound wasted a third of the frame. Sample the actual trajectory and fit to that.
 
+**Inject initial conditions into every level of the integrator.** A leapfrog scheme carries
+`u` and `up`; adding a disturbance to `u` alone is read as a velocity impulse of one cell per
+step, which carries ~100x the energy of the displacement you meant. In `waves` the rain drops
+were injected this way and the surface grew to |u| = 26, saturating the colour map - found by
+measuring max|u| per second, not by eye. Add to both levels (or set `up = u.copy()` after).
+
+**Low-signal is not the same as frozen, but fix it anyway.** `waves` at c = 0.30 opened on
+three thin rings moving ~2px per sample and measured under 0.15 for its first 0.6s. Nothing was
+stuck; too little of the frame was changing. The fix was more motion - faster waves and seven
+drops already rippling at frame 0 - not a looser threshold.
+
 **Watch for physics that is real but unusable.** An equal-mass gravitating cluster genuinely
 evaporates (measured extent 5.9 to 17.8); `threebody` runs its many-body beat in a soft
 confining bowl and says so in the source. Note any such compromise rather than hiding it.
@@ -293,6 +304,13 @@ the captions first, then move.
   `fourcolour` at `fill_opacity` 0.16 was invisible in the scan and on screen, even though the
   updater was verified to be running 62 times per `play` call. If a fix does not move the
   measured number, it is not a fix - raise the amplitude or change the approach.
+- **Manim's partial-movie cache does not see simulation data.** It hashes the animations
+  and mobject structure, not the pixel array behind an `always_redraw` `ImageMobject`, so a
+  re-render after changing a precomputed simulation can silently splice in segments from the
+  previous cut. `waves` shipped with its first 0.4s from an older sim - the video's frame 0 had
+  0 lit pixels while the sim's frame 0 had 5,690 - and the mismatch was only caught by comparing
+  the two directly. `build.py render` now passes `--disable_caching`. If a video looks like an
+  earlier version of itself, that is why; delete `media/videos/<slug>/*/partial_movie_files`.
 - **`-s` stills skip animations**, so updaters and `always_redraw` never fire. A still can show
   a moving object frozen at its start and look like a bug that isn't. Verify anything moving by
   extracting frames from the finished mp4 with ffmpeg.

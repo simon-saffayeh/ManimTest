@@ -282,7 +282,12 @@ def cmd_render(slug: str) -> int:
     src = VIDEOS / f"{slug}.py"
 
     print(f"== rendering {slug} ==")
-    if run([str(MANIM), str(src), short.__name__]):
+    # --disable_caching: manim's partial-movie cache hashes the animations, not
+    # the pixel data behind an always_redraw ImageMobject, so a re-render after
+    # changing a precomputed simulation can silently splice in segments from
+    # the previous cut. `waves` shipped with its first 0.4s from an older sim
+    # this way. Simulations are cheap to redraw; stale footage is not.
+    if run([str(MANIM), "--disable_caching", str(src), short.__name__]):
         return 1
     if thumb and run([str(MANIM), "-s", str(src), thumb.__name__]):
         return 1
