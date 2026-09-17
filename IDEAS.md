@@ -51,6 +51,8 @@ that way; prefer topics that can.
 - [x] `threebody` — two bodies solvable, three not; ends on 60. 26.7s. Median 0.58.
 - [x] `ising` — 16,384 spins, order at one exact temperature. 28.7s. Median 23.30 (library best).
 - [x] `percolation` — nothing connects until 59.27%. 26.9s. Median 0.44.
+- [x] `life` — Conway's four rules, ending on a glider gun. 26.7s. Median 3.73.
+- [x] `spiral` — excitable media, why heart waves spiral. 29.9s. Median 29.44 (library best).
 
 ## Strong candidates
 

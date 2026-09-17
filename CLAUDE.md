@@ -137,6 +137,11 @@ flickering everywhere at once rather than a few objects moving across black. Ren
 `ImageMobject` and the cost is trivial. When the brief is "maximum stimulus", reach for a
 lattice simulation before a particle one.
 
+**Check the neighbourhood shape on a lattice automaton.** A 3x3 block makes waves propagate
+in axis-aligned steps, so `spiral` came out with square, circuit-board spirals - a lattice
+artefact, not physics. A disc-shaped neighbourhood (radius 2.5, 20 cells) with a proportionally
+higher threshold rounds the fronts off and looks like the real thing.
+
 **Pick the seed so the simulation agrees with the script.** `percolation` narrates a threshold
 of 59%, but a randomly chosen lattice first spanned at 62% and the on-screen counter would have
 contradicted the narration. Sweeping 30 seeds found one spanning at 59.15%. This is not
