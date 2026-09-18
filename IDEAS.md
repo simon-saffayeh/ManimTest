@@ -62,6 +62,7 @@ that way; prefer topics that can.
 - [x] `forest` — forest fire model returns to 41% density from any start. 28.6s. Median 10.65.
 - [x] `schelling` — mild preference, total segregation. 29.4s. Median 1.98.
 - [x] `ant` — nine Langton's ants: chaos, then highways. 31.4s. Median 1.63.
+- [x] `rps` — spatial rock-paper-scissors: space preserves all three. 30.1s. Median 34.32.
 
 ## Strong candidates
 

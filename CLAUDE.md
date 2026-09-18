@@ -157,6 +157,7 @@ still even if no single stretch is technically frozen. Library baseline, worst t
 | `catmap`     | 18.17  | 151x151 picture sheared, exact loop|
 | `ising`      | 23.30  | 16,384 spins                       |
 | `spiral`     | 29.44  | excitable medium                   |
+| `rps`        | 34.32  | 3-species lattice, spiral fronts   |
 | `traffic`    | 35.84  | space-time road, scrolling         |
 | `hexagons`   | 37.44  | full-frame drifting Voronoi, best  |
 
@@ -268,6 +269,15 @@ lands mid-fade; measure the caption band across a few consecutive frames instead
   built the same way the base class builds the title (`weight="BOLD", font_size=48`, scaled
   to `SAFE_W + 0.2`, at `TITLE_CENTER`) and return it with the artwork.
 - **The emulated stall scan needs no area scaling** when the image is the frame.
+
+**Some claims are inherently a quiet screen - drop them rather than falsify them.** A video
+about a *protected* population (herd immunity below threshold) has nothing to show by
+definition: the epidemic fizzles. Re-seeding it to keep the frame busy at 40 new cases per
+frame infected 100% of the population and destroyed the very claim the video was making. Five
+topics were dropped this way in one batch (fireflies didn't synchronise, voter-model coarsening
+had no clean law, self-avoiding walks measured 0.614 against a theoretical 0.75, ballistic
+deposition gave no stable KPZ exponent, DLA's dimension was fit-range dependent at 1.49-1.64).
+Verifying first is what makes that cheap - all five were caught before any render.
 
 **A process that completes mid-video leaves the rest of the screen dead.** `schelling`
 finished segregating at t=8s and the emulated stall scan showed 149 of 170 samples static -
