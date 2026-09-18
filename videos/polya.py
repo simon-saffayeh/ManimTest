@@ -188,8 +188,11 @@ class Polya(ShortScene):
             "probably - with probability exactly one. It just takes a while."
         )
         with self.beat(text) as t:
-            self.play(FadeOut(start), FadeIn(certain),
-                      run_time=0.16 * t.duration)
+            # Out then in, not cross-faded: two backed panels at the same
+            # position are both legible mid-fade (measured 27,559 lit pixels
+            # against a normal 19,000) and read as a mistake.
+            self.play(FadeOut(start), run_time=0.08 * t.duration)
+            self.play(FadeIn(certain), run_time=0.08 * t.duration)
             self.wait(0.74 * t.duration)
 
         # ---- 0:16-0:26 the one idea: three dimensions break it -------------
@@ -203,8 +206,11 @@ class Polya(ShortScene):
             "a thirty-four percent chance of ever coming home."
         )
         with self.beat(text) as t:
-            self.play(FadeOut(certain), FadeIn(space),
-                      run_time=0.16 * t.duration)
+            # Out then in, not cross-faded: two backed panels at the same
+            # position are both legible mid-fade (measured 27,559 lit pixels
+            # against a normal 19,000) and read as a mistake.
+            self.play(FadeOut(certain), run_time=0.08 * t.duration)
+            self.play(FadeIn(space), run_time=0.08 * t.duration)
             self.wait(0.74 * t.duration)
 
         # ---- 0:26-0:34 land it --------------------------------------------
@@ -218,7 +224,11 @@ class Polya(ShortScene):
             "way home. A drunk bird may be lost forever."
         )
         with self.beat(text) as t:
-            self.play(FadeOut(space), FadeIn(line), run_time=0.16 * t.duration)
+            # Out then in, not cross-faded: two backed panels at the same
+            # position are both legible mid-fade (measured 27,559 lit pixels
+            # against a normal 19,000) and read as a mistake.
+            self.play(FadeOut(space), run_time=0.08 * t.duration)
+            self.play(FadeIn(line), run_time=0.08 * t.duration)
             self.wait(0.74 * t.duration)
 
         self.wait(0.6)

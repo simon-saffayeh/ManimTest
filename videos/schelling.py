@@ -239,7 +239,10 @@ class Schelling(ShortScene):
             "wanted from what the crowd did."
         )
         with self.beat(text) as t:
-            self.play(FadeOut(split), FadeIn(lesson), run_time=0.16 * t.duration)
+            # Out then in, not cross-faded: two backed panels at the same
+            # position are both legible mid-fade and read as a mistake.
+            self.play(FadeOut(split), run_time=0.08 * t.duration)
+            self.play(FadeIn(lesson), run_time=0.10 * t.duration)
             self.wait(0.74 * t.duration)
 
         self.wait(0.6)

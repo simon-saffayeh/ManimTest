@@ -60,6 +60,8 @@ that way; prefer topics that can.
 - [x] `polya` — random walk comes home in 2D, not in 3D. 28.9s. Median 4.31.
 - [x] `traffic` — phantom jams from nothing but random braking. 31.2s. Median 35.84.
 - [x] `forest` — forest fire model returns to 41% density from any start. 28.6s. Median 10.65.
+- [x] `schelling` — mild preference, total segregation. 29.4s. Median 1.98.
+- [x] `ant` — nine Langton's ants: chaos, then highways. 31.4s. Median 1.63.
 
 ## Strong candidates
 

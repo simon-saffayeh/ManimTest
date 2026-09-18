@@ -227,7 +227,11 @@ class Hexagons(ShortScene):
             "right now, is exactly six. Always exactly six. Euler proved it."
         )
         with self.beat(text) as t:
-            self.play(FadeOut(what), FadeIn(six), run_time=0.16 * t.duration)
+            # Out then in, not cross-faded: two backed panels at the same
+            # position are both legible mid-fade (measured 27,559 lit pixels
+            # against a normal 19,000) and read as a mistake.
+            self.play(FadeOut(what), run_time=0.08 * t.duration)
+            self.play(FadeIn(six), run_time=0.08 * t.duration)
             self.wait(0.74 * t.duration)
 
         # ---- 0:15-0:25 the one idea: relax, and honeycomb appears ----------
@@ -239,7 +243,11 @@ class Hexagons(ShortScene):
             "cell settles on six sides, and the sheet turns into honeycomb."
         )
         with self.beat(text) as t:
-            self.play(FadeOut(six), FadeIn(relax), run_time=0.16 * t.duration)
+            # Out then in, not cross-faded: two backed panels at the same
+            # position are both legible mid-fade (measured 27,559 lit pixels
+            # against a normal 19,000) and read as a mistake.
+            self.play(FadeOut(six), run_time=0.08 * t.duration)
+            self.play(FadeIn(relax), run_time=0.08 * t.duration)
             self.wait(0.74 * t.duration)
 
         # ---- 0:25-0:33 land it --------------------------------------------
@@ -253,7 +261,11 @@ class Hexagons(ShortScene):
             "simply where a sheet settles when every cell pushes back equally."
         )
         with self.beat(text) as t:
-            self.play(FadeOut(relax), FadeIn(where), run_time=0.16 * t.duration)
+            # Out then in, not cross-faded: two backed panels at the same
+            # position are both legible mid-fade (measured 27,559 lit pixels
+            # against a normal 19,000) and read as a mistake.
+            self.play(FadeOut(relax), run_time=0.08 * t.duration)
+            self.play(FadeIn(where), run_time=0.08 * t.duration)
             self.wait(0.74 * t.duration)
 
         # The sheet is still drifting on the last frame.

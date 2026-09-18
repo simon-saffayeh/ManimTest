@@ -253,7 +253,14 @@ confining bowl and says so in the source. Note any such compromise rather than h
 what "moving visuals not contained in a box" means in practice. The costs are real and all
 about text:
 
-- **Every caption needs a dark backing** - `BackgroundRectangle(mob, BLACK, fill_opacity
+- **Never cross-fade two captions at the same position.** `self.play(FadeOut(a), FadeIn(b))`
+leaves both legible for the middle of the transition - measured 27,559 lit pixels in the
+caption band against a normal 19,000 - and it reads as a rendering mistake rather than a
+transition. Fade out, then fade in, as two separate `play` calls. This was in all 18 caption
+changes across six videos before it was caught, because a single spot-checked frame rarely
+lands mid-fade; measure the caption band across a few consecutive frames instead.
+
+**Every caption needs a dark backing** - `BackgroundRectangle(mob, BLACK, fill_opacity
   ~0.74, buff ~0.16)` grouped under the text. Without it the lower third is unreadable on a
   busy sheet, and the caption scan will still pass because it only counts lit pixels.
 - **`ThumbnailScene` draws the title with no backing.** On a full-frame sheet the white title

@@ -180,7 +180,11 @@ class Ant(ShortScene):
             "thousand steps of mess with no pattern in it at all."
         )
         with self.beat(text) as t:
-            self.play(FadeOut(rules), FadeIn(mess), run_time=0.16 * t.duration)
+            # Out then in, not cross-faded: two backed panels at the same
+            # position are both legible mid-fade (measured 27,559 lit pixels
+            # against a normal 19,000) and read as a mistake.
+            self.play(FadeOut(rules), run_time=0.08 * t.duration)
+            self.play(FadeIn(mess), run_time=0.08 * t.duration)
             self.wait(0.74 * t.duration)
 
         # ---- 0:17-0:26 the one idea: the highway ---------------------------
@@ -195,7 +199,11 @@ class Ant(ShortScene):
             "straight off into the distance."
         )
         with self.beat(text) as t:
-            self.play(FadeOut(mess), FadeIn(road), run_time=0.16 * t.duration)
+            # Out then in, not cross-faded: two backed panels at the same
+            # position are both legible mid-fade (measured 27,559 lit pixels
+            # against a normal 19,000) and read as a mistake.
+            self.play(FadeOut(mess), run_time=0.08 * t.duration)
+            self.play(FadeIn(road), run_time=0.08 * t.duration)
             self.wait(0.74 * t.duration)
 
         # ---- 0:26-0:34 land it: still a conjecture -------------------------
@@ -208,7 +216,11 @@ class Ant(ShortScene):
             "has been able to prove it always will."
         )
         with self.beat(text) as t:
-            self.play(FadeOut(road), FadeIn(open_q), run_time=0.16 * t.duration)
+            # Out then in, not cross-faded: two backed panels at the same
+            # position are both legible mid-fade (measured 27,559 lit pixels
+            # against a normal 19,000) and read as a mistake.
+            self.play(FadeOut(road), run_time=0.08 * t.duration)
+            self.play(FadeIn(open_q), run_time=0.08 * t.duration)
             self.wait(0.74 * t.duration)
 
         self.wait(0.6)
