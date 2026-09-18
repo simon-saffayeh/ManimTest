@@ -64,16 +64,17 @@ DUR = 34.0
 STEPS_PER_FRAME = 1
 SEED = 3
 
-# Tuned against the emulated stall scan. At SENSE_DIST 7 / DECAY 0.90 the
-# network condensed onto 1% of the area by t=18s and then froze - 102 of 170
-# samples static. A shorter sensor, a faster decay and a little heading noise
-# keep the filaments rearranging for the whole runtime instead of locking.
-SENSE_DIST = 4.0
+# Tuned against the emulated stall scan AND against how it actually looks. At
+# SENSE_DIST 7 / DECAY 0.90 with a 3x3 blur the network condensed onto 1% of
+# the area and froze (102 of 170 samples static). Cranking the wobble fixed the
+# freeze but destroyed the structure - the render showed one blurry arc. These
+# values plus no blur keep it both moving and sharp: filaments ~7%, cov ~4.6.
+SENSE_DIST = 5.0
 SENSE_ANGLE = np.pi / 4
 TURN_ANGLE = np.pi / 5
 SPEED = 1.0
-DECAY = 0.82
-WOBBLE = 0.22                   # radians of random heading noise per step
+DECAY = 0.94
+WOBBLE = 0.10                   # radians of random heading noise per step
 
 CAPTION_Y = DOWN * 2.05
 COUNTER_Y = DOWN * 1.05
@@ -119,12 +120,12 @@ def simulate():
             pos[:, 1] %= H
             np.add.at(trail, (pos[:, 1].astype(np.int32),
                               pos[:, 0].astype(np.int32)), 1.0)
-        # diffuse (3x3 mean) then decay
-        acc = np.zeros_like(trail)
-        for a in (-1, 0, 1):
-            for b in (-1, 0, 1):
-                acc += np.roll(np.roll(trail, a, 0), b, 1)
-        trail = (acc / 9.0) * DECAY
+        # Decay only, no 3x3 blur. The blur smeared the filaments into a
+        # single soft arc - the rendered video showed one blurry curve and a
+        # dot where the narration promises a branching network - and it also
+        # drove the filament fraction down to 4%. Without it the structure
+        # holds at 7% and stays sharp.
+        trail *= DECAY
     return frames, np.array(cov), np.array(filament)
 
 

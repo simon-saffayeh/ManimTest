@@ -19,8 +19,8 @@ perimeter / sqrt(area) (scale-free, so it measures raggedness not size):
     step   0    ratio 24.78        step 200    ratio 5.13
     step 100    ratio  5.23        step 300    ratio 5.17
 
-The run in the video uses four larger blobs, which start rougher: the
-on-screen counter goes from 76 at frame 0 to about 6 at the end, and the
+The run in the video uses twelve medium blobs updated every 6th frame: the
+on-screen counter goes from 81 at frame 0 to about 10 at the end, and the
 captions quote those numbers rather than the single-blob figures.
 
 A perfect circle has ratio 2*sqrt(pi) = 3.54. The lattice settles near 6
@@ -48,8 +48,8 @@ META = VideoMeta(
         "The result is surface tension. Ragged edges smooth out, thin necks "
         "pinch and separate, small blobs evaporate, and what survives rounds "
         "off towards circles. Measured on the run in this video, the shape "
-        "factor - perimeter over the square root of area - falls from 76 to "
-        "about 6.",
+        "factor - perimeter over the square root of area - falls from 81 to "
+        "about 10.",
         "This is curvature flow: a boundary that moves inward where it bulges "
         "and outward where it dips. It is what a soap film does, and a "
         "majority vote turns out to be the same rule in disguise.",
@@ -67,8 +67,15 @@ SEED = 1
 # evaporated to 3% of the frame by the end and the closing caption had nothing
 # left to point at; the raggedness also started at 139, not the 24.8 measured
 # on the single-blob reference run.
-ROUGHNESS = 6.5                 # noise on the starting boundary
-N_BLOBS = 4
+# Twelve medium blobs, updated every 6th frame. Four large blobs merged into
+# two smooth masses filling the frame - the render showed no separate shapes,
+# no pinching necks and nothing evaporating, which is everything the narration
+# describes. Twelve smaller ones evaporate entirely by step 700 if updated
+# every frame. Updating every 6th frame keeps 6 distinct blobs at t=20s and 4
+# at the end, with the area falling 0.207 -> 0.121.
+ROUGHNESS = 3.8                 # noise on the starting boundary
+N_BLOBS = 12
+UPDATE_EVERY = 6                # majority-vote steps happen every Nth frame
 
 CAPTION_Y = DOWN * 2.05
 COUNTER_Y = DOWN * 1.05
@@ -94,14 +101,16 @@ def simulate():
     for _ in range(N_BLOBS):
         cy = rng.uniform(0.12, 0.88) * H
         cx = rng.uniform(0.15, 0.85) * W
-        r = rng.uniform(26, 44)
+        r = rng.uniform(11, 20)
         d = np.hypot(yy - cy, xx - cx) + rng.normal(0, ROUGHNESS, (H, W))
         g |= (d < r)
     frames, ratio, area = [], [], []
-    for _ in range(int(DUR * FPS) + 2):
+    for f in range(int(DUR * FPS) + 2):
         frames.append(g.copy())
         ratio.append(_shape_factor(g))
         area.append(float(g.mean()))
+        if f % UPDATE_EVERY:
+            continue
         nb = np.zeros((H, W), np.int16)
         for a in (-1, 0, 1):
             for b in (-1, 0, 1):
@@ -198,12 +207,12 @@ class Tension(ShortScene):
             self.wait(0.74 * t.duration)
 
         # ---- 0:26-0:34 land it --------------------------------------------
-        num = backed(self.panel(r"\text{raggedness } 76 \rightarrow 6",
+        num = backed(self.panel(r"\text{raggedness } 81 \rightarrow 10",
                                 size=34, center=CAPTION_Y))
         num[1].set_color(YELLOW)
 
         text = (
-            "Measured, the raggedness falls from seventy-six to about six. A "
+            "Measured, the raggedness falls from eighty-one to about ten. A "
             "majority vote is curvature flow wearing a disguise."
         )
         with self.beat(text) as t:

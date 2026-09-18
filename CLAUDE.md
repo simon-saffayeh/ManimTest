@@ -270,6 +270,15 @@ lands mid-fade; measure the caption band across a few consecutive frames instead
   to `SAFE_W + 0.2`, at `TITLE_CENTER`) and return it with the artwork.
 - **The emulated stall scan needs no area scaling** when the image is the frame.
 
+**The stall scan does not check that the picture still means anything.** `slime` passed every
+scan - zero static frames, no caption gaps - while showing a single blurry arc where the
+narration promised a branching network. The parameters that fixed an earlier freeze (shorter
+sensor, heavy heading wobble, 3x3 blur) had destroyed the structure, and the numeric proxies
+still looked healthy. Always look at a rendered frame and ask whether it shows what the script
+says it shows; a metric that only measures *change* cannot see a picture that is moving and
+meaningless. For agent-trail simulations specifically, a diffusion blur smears filaments into
+soft blobs - decay alone keeps them sharp.
+
 **Some claims are inherently a quiet screen - drop them rather than falsify them.** A video
 about a *protected* population (herd immunity below threshold) has nothing to show by
 definition: the epidemic fizzles. Re-seeding it to keep the frame busy at 40 new cases per

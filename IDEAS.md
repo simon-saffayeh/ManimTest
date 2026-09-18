@@ -63,6 +63,7 @@ that way; prefer topics that can.
 - [x] `schelling` — mild preference, total segregation. 29.4s. Median 1.98.
 - [x] `ant` — nine Langton's ants: chaos, then highways. 31.4s. Median 1.63.
 - [x] `rps` — spatial rock-paper-scissors: space preserves all three. 30.1s. Median 34.32.
+- [x] `slime` — 60,000 agents build a transport network with no plan. 31.5s. Median 0.74.
 
 ## Strong candidates
 
