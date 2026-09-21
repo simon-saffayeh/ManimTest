@@ -64,6 +64,7 @@ that way; prefer topics that can.
 - [x] `ant` — nine Langton's ants: chaos, then highways. 31.4s. Median 1.63.
 - [x] `rps` — spatial rock-paper-scissors: space preserves all three. 30.1s. Median 34.32.
 - [x] `slime` — 60,000 agents build a transport network with no plan. 31.5s. Median 0.74.
+- [x] `tension` — majority vote acts like surface tension. 30.2s. Median 1.16.
 
 ## Strong candidates
 

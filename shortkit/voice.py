@@ -28,6 +28,19 @@ ROOT = Path(__file__).resolve().parent.parent
 VOICES_FILE = ROOT / "voices.json"
 TTS_TIMEOUT = 180        # seconds; see speech_service()
 
+# Playback speed applied to every synthesised clip. The pinned elevenlabs
+# 0.2.27 SDK's VoiceSettings has no `speed` field (only stability,
+# similarity_boost, style and use_speaker_boost), so the API cannot be asked
+# to talk faster. Instead each finished mp3 is time-stretched with ffmpeg's
+# atempo filter, which changes tempo without shifting pitch. Measured on a
+# real clip: 7.29s -> 6.51s at 1.12.
+#
+# This happens BEFORE manim-voiceover reads the file, so `t.duration` already
+# reflects the shorter clip and every run_time fraction stays correct.
+# Override per run with SPEECH_SPEED in .env.
+SPEECH_SPEED = float(os.getenv("SPEECH_SPEED", "1.12"))
+ATEMPO_MIN, ATEMPO_MAX = 0.5, 2.0       # ffmpeg's per-filter limits
+
 
 @dataclass(frozen=True)
 class Voice:
@@ -147,4 +160,66 @@ def speech_service(voice: Voice, cache_dir: Path | None = None):
             "voices via the API'. Upgrade the plan, or pick a preset that "
             "`build.py voices` lists as available."
         )
-    return service
+    return _Faster(service) if abs(SPEECH_SPEED - 1.0) > 1e-3 else service
+
+
+def _atempo_chain(speed: float) -> str:
+    """atempo only accepts 0.5-2.0, so large factors need chaining."""
+    parts, remaining = [], speed
+    while remaining > ATEMPO_MAX:
+        parts.append(f"atempo={ATEMPO_MAX}")
+        remaining /= ATEMPO_MAX
+    while remaining < ATEMPO_MIN:
+        parts.append(f"atempo={ATEMPO_MIN}")
+        remaining /= ATEMPO_MIN
+    parts.append(f"atempo={remaining:.6f}")
+    return ",".join(parts)
+
+
+class _Faster:
+    """Wraps a speech service and time-stretches every clip it produces.
+
+    Delegates everything else, so the substitution guard, the cache and
+    `build.py check`'s audit of cache.json all behave exactly as before. Only
+    the mp3 on disk changes, and only once: a clip that has already been
+    stretched is left alone, because manim-voiceover hands back the cached
+    path on a hit and re-stretching would compound the speed-up on every
+    re-render.
+    """
+
+    def __init__(self, inner):
+        self._inner = inner
+        self._done: set[str] = set()
+
+    def __getattr__(self, name):
+        return getattr(self._inner, name)
+
+    def _stretch(self, path: Path) -> None:
+        import subprocess
+
+        if str(path) in self._done or not path.exists():
+            return
+        tmp = path.with_suffix(".spedup.mp3")
+        ffmpeg = ROOT / "bin" / "ffmpeg.exe"
+        exe = str(ffmpeg) if ffmpeg.exists() else "ffmpeg"
+        r = subprocess.run(
+            [exe, "-y", "-loglevel", "error", "-i", str(path),
+             "-filter:a", _atempo_chain(SPEECH_SPEED), str(tmp)],
+            capture_output=True, text=True,
+        )
+        if r.returncode == 0 and tmp.exists() and tmp.stat().st_size > 0:
+            tmp.replace(path)
+            self._done.add(str(path))
+        else:
+            tmp.unlink(missing_ok=True)
+            from manim import logger
+            logger.warning("speech speed-up failed for %s: %s", path, r.stderr)
+
+    def generate_from_text(self, text, cache_dir=None, path=None, **kwargs):
+        out = self._inner.generate_from_text(text, cache_dir=cache_dir,
+                                             path=path, **kwargs)
+        base = Path(cache_dir) if cache_dir else Path(self._inner.cache_dir)
+        name = out.get("original_audio") if isinstance(out, dict) else None
+        if name:
+            self._stretch(base / name)
+        return out

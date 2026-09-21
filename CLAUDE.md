@@ -110,8 +110,17 @@ words inside it, and never let the screen hold still while the narrator catches 
 is the short form done right - 3 beats, 65 words, 24s, and the animation runs continuously
 underneath all three so no beat ever opens on a static frame.
 
-**Pacing: ~2.6 words/sec** (measured for Jesse; Roger was 2.85). `META.words_budget` does the arithmetic:
-40s ≈ 114 words. Four beats is the usual shape.
+**Narration is sped up 1.12x in post.** The pinned elevenlabs 0.2.27 SDK has no `speed`
+field, so `shortkit.voice` wraps the speech service and time-stretches each finished mp3 with
+ffmpeg `atempo` (tempo only, pitch preserved) before manim reads it - which means `t.duration`
+is already the shortened value and every `run_time` fraction stays correct with no per-video
+change. Set `SPEECH_SPEED` in `.env` to adjust. Two things to know: a cached clip is stretched
+exactly once (re-stretching on every re-render would compound the speed-up, and the wrapper
+guards against it), and `META.words_budget` already includes the factor.
+
+**Pacing: ~2.9 words/sec** - 2.6 measured for Jesse, times the 1.12 playback speed-up.
+`META.words_budget` does the arithmetic and already includes the factor: 33s is about 96
+words, 40s about 116. Four beats is the usual shape.
 
 ## 3D videos
 
