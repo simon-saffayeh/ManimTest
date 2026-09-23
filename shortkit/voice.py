@@ -33,12 +33,12 @@ TTS_TIMEOUT = 180        # seconds; see speech_service()
 # similarity_boost, style and use_speaker_boost), so the API cannot be asked
 # to talk faster. Instead each finished mp3 is time-stretched with ffmpeg's
 # atempo filter, which changes tempo without shifting pitch. Measured on a
-# real clip: 7.29s -> 6.51s at 1.12.
+# real clip: 7.29s -> 6.51s at 1.12, and 6.08s at 1.20.
 #
 # This happens BEFORE manim-voiceover reads the file, so `t.duration` already
 # reflects the shorter clip and every run_time fraction stays correct.
 # Override per run with SPEECH_SPEED in .env.
-SPEECH_SPEED = float(os.getenv("SPEECH_SPEED", "1.12"))
+SPEECH_SPEED = float(os.getenv("SPEECH_SPEED", "1.20"))
 ATEMPO_MIN, ATEMPO_MAX = 0.5, 2.0       # ffmpeg's per-filter limits
 
 

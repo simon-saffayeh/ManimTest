@@ -65,6 +65,50 @@ that way; prefer topics that can.
 - [x] `rps` — spatial rock-paper-scissors: space preserves all three. 30.1s. Median 34.32.
 - [x] `slime` — 60,000 agents build a transport network with no plan. 31.5s. Median 0.74.
 - [x] `tension` — majority vote acts like surface tension. 30.2s. Median 1.16.
+- [x] `growth` — Eden fills, DLA branches; the tips shadow the inside. 29.7s. Median 3.0.
+- [x] `colony` — ants find the short route without measuring anything. 33.3s. Median 0.57.
+- [x] `vicsek` — a flock holds, then snaps, over one step of the noise dial. 36.6s. Median 39.0.
+- [x] `sneppen` — nobody sets the bar and 95% of species clear it. 38.9s. Median 7.7.
+- [x] `parrondo` — two losing games alternated become a winning one. 38.3s. Median 6.8.
+- [x] `wealth` — perfectly fair trades give a Gini of 0.50. 37.9s. Median 8.3.
+- [x] `chimera` — identical oscillators split into locked and drifting halves. 37.1s. Median 22.6.
+- [x] `predator` — Lotka-Volterra waves that never reach a steady state. 37.7s. Median 39.7.
+- [x] `cooperate` — betrayal dominates, cooperation survives in blocks. 36.5s. Median 55.3.
+- [x] `flame` — Kuramoto-Sivashinsky: deterministic, and never repeats. 38.7s. Median 10.4.
+
+## Verified but rejected, with the measurement
+
+These were checked numerically before any animation code was written. Recording them
+here so the next session does not pay for the same experiments again.
+
+- **Braess's paradox** — verified exactly (average journey 65.02 with the link closed,
+  80.00 with it open, the textbook numbers). Rejected on motion: cars as dots on a road
+  network measured 0.11 median with 129/230 frozen samples, and a scrolling space-time
+  rebuild still gave 0.81 with 109 frozen. An equilibrium is by definition a picture that
+  stops changing.
+- **Bootstrap percolation** — verified and genuinely striking (9 adopters in a block convert
+  all 40,000 cells; 200 scattered reach 0.5% and stop; scattering needs ~400, a factor of 44).
+  Rejected on motion: a single growth front, 0.21 median at best with 78/230 frozen, even
+  after revealing each ring cell-by-cell.
+- **Cahn-Hilliard coarsening** — exponent converges to 0.329 against the theoretical 1/3 in
+  the late window. Rejected on motion: a cube-root law runs out of change, 0.003 flip rate
+  late on, and a geometric time schedule still left fully static samples.
+- **1D Bak-Tang-Wiesenfeld sandpile** — degenerate. It relaxes to a perfect staircase of
+  slope 2 where nothing can topple: zero cells changed across an entire 34s table. The 2D
+  abelian version is already `sandpile`.
+- **4-species cyclic dominance "alliances"** — the neutral-pair alliance claim FAILED its
+  control: at seeds 2 and 3 the non-allied pair clumped as much as the allied pair, so the
+  apparent alliance was just percolation of any two of four species. Coexistence itself is
+  solid (zero extinctions in 12 runs at S=3,4,5,6) but that is `rps` territory.
+- **Deffuant bounded-confidence opinion clustering** — the textbook 1/(2*eps) cluster count
+  did not reproduce (eps=0.3 predicted 2, measured 6); the runs had not converged.
+- **Coupled map lattice as "deterministic noise"** — Lyapunov exponent is solidly positive
+  (0.398) but the claim was false: autocorrelation at lag 1 is -0.59, so it is not
+  statistically noise-like.
+- **Noise-induced synchronisation of chaotic lattices** — did not synchronise at any noise
+  level tested; |x-y| stayed near 0.5.
+- **Motility-induced phase separation** — no separation at the packing fraction tried;
+  local density std stayed at 1.1 across all speeds.
 
 ## Strong candidates
 

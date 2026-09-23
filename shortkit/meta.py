@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-# 2.6 measured for Jesse over proofs01 (1083 words / 417s), x1.12 for the
+# 2.6 measured for Jesse over proofs01 (1083 words / 417s), x1.20 for the
 # playback speed-up applied in shortkit.voice (SPEECH_SPEED). Keep these in
 # step: if SPEECH_SPEED changes, this must change with it or every beat-timing
 # calculation in the videos will be wrong.
-WORDS_PER_SECOND = 2.6 * 1.12
+WORDS_PER_SECOND = 2.90   # measured on six 1.20x renders: 2.66-3.19, mean 2.91
 YT_TITLE_LIMIT = 100
 
 

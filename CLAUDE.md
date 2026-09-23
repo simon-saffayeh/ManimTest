@@ -110,7 +110,7 @@ words inside it, and never let the screen hold still while the narrator catches 
 is the short form done right - 3 beats, 65 words, 24s, and the animation runs continuously
 underneath all three so no beat ever opens on a static frame.
 
-**Narration is sped up 1.12x in post.** The pinned elevenlabs 0.2.27 SDK has no `speed`
+**Narration is sped up 1.20x in post.** The pinned elevenlabs 0.2.27 SDK has no `speed`
 field, so `shortkit.voice` wraps the speech service and time-stretches each finished mp3 with
 ffmpeg `atempo` (tempo only, pitch preserved) before manim reads it - which means `t.duration`
 is already the shortened value and every `run_time` fraction stays correct with no per-video
@@ -118,9 +118,9 @@ change. Set `SPEECH_SPEED` in `.env` to adjust. Two things to know: a cached cli
 exactly once (re-stretching on every re-render would compound the speed-up, and the wrapper
 guards against it), and `META.words_budget` already includes the factor.
 
-**Pacing: ~2.9 words/sec** - 2.6 measured for Jesse, times the 1.12 playback speed-up.
-`META.words_budget` does the arithmetic and already includes the factor: 33s is about 96
-words, 40s about 116. Four beats is the usual shape.
+**Pacing: ~3.1 words/sec** - 2.6 measured for Jesse, times the 1.20 playback speed-up.
+`META.words_budget` does the arithmetic and already includes the factor: 33s is about 103
+words, 40s about 125. Four beats is the usual shape.
 
 ## 3D videos
 
@@ -415,6 +415,41 @@ the captions first, then move.
 - **`-s` stills skip animations**, so updaters and `always_redraw` never fire. A still can show
   a moving object frozen at its start and look like a bug that isn't. Verify anything moving by
   extracting frames from the finished mp4 with ffmpeg.
+- **Render one video at a time.** Two concurrent renders both died with
+  `ValueError: Your installation does not support converting .dvi files to SVG`, which reads
+  like a broken MiKTeX install and is not one - the same `MathTex` compiled fine standalone
+  seconds later. A counter in an `always_redraw` recompiles LaTeX every frame, so two renders
+  means two MiKTeX processes colliding on shared temp files. Queue slugs in a `for` loop
+  rather than backgrounding several at once.
+- **`DUR` must outlast the narration, not the target.** The clock clamps to the last entry of
+  the frame table, so any video whose audio runs longer than `DUR` is frozen solid for the
+  difference. `vicsek` rendered at 36.6s against a 34s table and was completely still for its
+  final 2.6s - 7 stall samples with a run of 3, in a video that was otherwise the highest
+  motion in the library. Size the table to the *rendered* duration plus headroom (40s+ for a
+  33s target), not to `target_seconds`.
+- **`\quad` needs a space before the next token.** `rf"...\quad" rf"AABB..."` concatenates to
+  `\quadAABB`, an undefined control sequence, and the render dies several minutes in with a
+  LaTeX traceback. Compile any f-string `MathTex` once in isolation before spending a render
+  on it.
+- **A self-organising process that converges fast has no second half.** Both `sneppen` and
+  `wealth` reached their final measured value within 4-6 seconds at a flat update rate, which
+  puts the entire payoff before the hook finishes and leaves ~28s of a still picture. Ramp
+  the update rate (slow during beats 1-2, fast afterwards) so the convergence spans the video.
+  This is a scripting decision, not a physics one - the end state is identical either way.
+- **A topic that reaches equilibrium cannot meet a stimulation brief, and no rendering trick
+  fixes it.** Braess's paradox was verified exactly (average journey 65.02 closed vs 80.00
+  open, the textbook numbers) and then dropped: cars as dots on a road network measured 0.11
+  median motion with 129 of 230 samples frozen, and rebuilding it as a scrolling space-time
+  sheet still gave 0.81 with 109 frozen. The reason is not the drawing - it is that an
+  equilibrium is by definition a picture that stops changing. Ask "what is still moving at
+  t=30s?" before writing any code. `colony` shipped at 0.57 for the related reason that two
+  thin routes on black leave most of the frame empty.
+- **Plot a phase relative to the mean, never raw.** `chimera`'s locked oscillators share a
+  common phase that drifts steadily, so colouring by raw phase painted the entire frame in
+  horizontal rainbow stripes and the coherent arc - the whole subject of the video - was
+  invisible. Subtracting the ring's mean phase holds a locked region at a constant colour.
+  Verified numerically rather than by eye: temporal phase spread 0.001 for a locked column
+  against 0.440 for a drifting one.
 - Writing LaTeX through nested bash heredocs mangles backslashes (`\text` became a tab
   character, `\frac` a form feed). Use the Write tool for files containing LaTeX, and check
   `repr()` of the line rather than trusting grep output.
